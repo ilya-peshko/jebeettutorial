@@ -18,10 +18,28 @@ class JobFixtures extends Fixture
      */
     public function load(ObjectManager $manager): void
     {
-        $jobSensioLabs = new Job();
+        $jobExpired = new Job();
 
         /** @var Category $category */
         $category = $this->getReference('category-programming');
+
+        $jobExpired = new Job();
+        $jobExpired->setCategory($category)
+            ->setType('full-time')
+            ->setCompany('Sensio Labs')
+            ->setLogo('sensio-labs.gif')
+            ->setUrl('http://www.sensiolabs.com/')
+            ->setPosition('Web Developer Expired')
+            ->setLocation('Paris, France')
+            ->setDescription('Lorem ipsum dolor sit amet, consectetur adipisicing elit.')
+            ->setHowToApply('Send your resume to lorem.ipsum [at] dolor.sit')
+            ->setPublic(true)
+            ->setActivated(true)
+            ->setToken('job_expired')
+            ->setEmail('job@example.com')
+            ->setExpiresAt(new \DateTime('-10 days'));
+
+        $jobSensioLabs = new Job();
 
         $jobSensioLabs->setCategory($category)
             ->setType('full-time')
@@ -40,9 +58,6 @@ class JobFixtures extends Fixture
 
         $jobExtremeSensio = new Job();
 
-        /** @var Category $category */
-        $category = $this->getReference('category-programming');
-
         $jobExtremeSensio->setCategory($category)
             ->setType('part-time')
             ->setCompany('Extreme Sensio')
@@ -58,6 +73,23 @@ class JobFixtures extends Fixture
             ->setEmail('job@example.com')
             ->setExpiresAt(new \DateTime('+30 days'));
 
+        for ($i = 100; $i <= 130; $i++) {
+            $job = new Job();
+            $job->setCategory($category)
+            ->setType('full-time')
+            ->setCompany('Company ' . $i)
+            ->setPosition('Web Developer')
+            ->setLocation('Paris, France')
+            ->setDescription('Lorem ipsum dolor sit amet, consectetur adipisicing elit.')
+            ->setHowToApply('Send your resume to lorem.ipsum [at] dolor.sit')
+            ->setPublic(true)
+            ->setActivated(true)
+            ->setToken('job_' . $i)
+            ->setEmail('job@example.com');
+
+            $manager->persist($job);
+        }
+        $manager->persist($jobExpired);
         $manager->persist($jobSensioLabs);
         $manager->persist($jobExtremeSensio);
 

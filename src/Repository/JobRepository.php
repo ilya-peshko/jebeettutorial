@@ -2,8 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Category;
 use App\Entity\Job;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -14,27 +17,66 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class JobRepository extends ServiceEntityRepository
 {
+    /**
+     * JobRepository constructor.
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Job::class);
     }
 
-    // /**
-    //  * @return Job[] Returns an array of Job objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @param int|null $categoryId
+     *
+     * @return int|mixed|string
+     */
+    public function findActiveJobs(int $categoryId = null)
+    {
+        $qb = $this->createQueryBuilder('j')
+            ->andWhere('j.expiresAt > :date')
+            ->setParameter('date', new \DateTime())
+            ->orderBy('j.expiresAt', 'DESC');
+
+        if ($categoryId) {
+            $qb->andWhere('j.category = :categoryId')
+                ->setParameter('categoryId', $categoryId);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param int $id
+     * @throws NonUniqueResultException
+     *
+     * @return Job|null
+     */
+    public function findActiveJob(int $id): ?Job
     {
         return $this->createQueryBuilder('j')
-            ->andWhere('j.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('j.id', 'ASC')
-            ->setMaxResults(10)
+            ->where('j.id = :id')
+            ->andWhere('j.expiresAt > :date')
+            ->setParameter('id', $id)
+            ->setParameter('date', new \DateTime())
             ->getQuery()
-            ->getResult()
-        ;
+            ->getOneOrNullResult();
     }
-    */
+
+    /**
+     * @param Category $category
+     *
+     * @return AbstractQuery
+     */
+    public function getActiveJobsByCategoryQuery(Category $category): AbstractQuery
+    {
+        return $this->createQueryBuilder('j')
+            ->where('j.category = :category')
+            ->andWhere('j.expiresAt > :date')
+            ->setParameter('category', $category)
+            ->setParameter('date', new \DateTime())
+            ->getQuery();
+    }
 
     /*
     public function findOneBySomeField($value): ?Job

@@ -440,23 +440,6 @@ class Job
     }
 
     /**
-     * @ORM\PrePersist()
-     */
-    public function prePersist()
-    {
-        $this->createdAt = new \DateTime();
-        $this->updatedAt = new \DateTime();
-    }
-
-    /**
-     * @ORM\PreUpdate()
-     */
-    public function preUpdate()
-    {
-        $this->updatedAt = new \DateTime();
-    }
-
-    /**
      * @return bool|null
      */
     public function getPublic(): ?bool
@@ -474,6 +457,7 @@ class Job
 
     /**
      * @param \DateTimeInterface $createdAt
+     *
      * @return $this
      */
     public function setCreatedAt(\DateTimeInterface $createdAt): self
@@ -485,6 +469,7 @@ class Job
 
     /**
      * @param \DateTimeInterface $updatedAt
+     *
      * @return $this
      */
     public function setUpdatedAt(\DateTimeInterface $updatedAt): self
@@ -492,5 +477,26 @@ class Job
         $this->updatedAt = $updatedAt;
 
         return $this;
+    }
+
+    /**
+     * @ORM\PrePersist()
+     */
+    public function prePersist()
+    {
+        $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
+
+        if (!$this->expiresAt) {
+            $this->expiresAt = (clone $this->createdAt)->modify('+30 days');
+        }
+    }
+
+    /**
+     * @ORM\PreUpdate()
+     */
+    public function preUpdate()
+    {
+        $this->updatedAt = new \DateTime();
     }
 }

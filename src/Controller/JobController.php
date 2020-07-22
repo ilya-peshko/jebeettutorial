@@ -2,13 +2,13 @@
 
 namespace App\Controller;
 
-
+use App\Entity\Category;
 use App\Entity\Job;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-
+use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 /**
  * Class JobController
  * @package App\Controller
@@ -17,22 +17,23 @@ class JobController extends AbstractController
 {
     /**
      * @Route("/", name="job.list")
+     * @param EntityManagerInterface $em
      *
      * @return Response
      */
-    public function list(): Response
+    public function list(EntityManagerInterface $em): Response
     {
-        $jobs = $this->getDoctrine()->getRepository(Job::class)->findAll();
+        $categories = $em->getRepository(Category::class)->findWithActiveJobs();
 
         return $this->render('job/list.html.twig', [
-            'jobs' => $jobs,
+            'categories' => $categories,
         ]);
     }
 
     /**
-     * @Route("/{id}", name="job.show")
+     * @Route("job/{id}", name="job.show", methods="GET", requirements={"id" = "\d+"})
+     * @Entity("job", expr="repository.findActiveJob(id)")
      * @param Job $job
-     * @ParamConverter("job", class="App\Entity\Job")
      *
      * @return Response
      */
