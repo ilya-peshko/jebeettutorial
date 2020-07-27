@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Category;
 use App\Entity\Job;
 use App\Form\JobType;
+use App\Service\JobHistoryService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,29 +21,39 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 class JobController extends AbstractController
 {
     /**
-     * @Route("/", name="job.list")
+     * Lists all job entities.
+     *
+     * @Route("/", name="job.list", methods="GET")
+     *
      * @param EntityManagerInterface $em
+     * @param JobHistoryService $jobHistoryService
      *
      * @return Response
      */
-    public function list(EntityManagerInterface $em): Response
+    public function list(EntityManagerInterface $em, JobHistoryService $jobHistoryService): Response
     {
         $categories = $em->getRepository(Category::class)->findWithActiveJobs();
 
         return $this->render('job/list.html.twig', [
-            'categories' => $categories,
+            'categories'  => $categories,
+            'historyJobs' => $jobHistoryService->getJobs(),
         ]);
     }
 
     /**
      * @Route("job/{id}", name="job.show", methods="GET", requirements={"id" = "\d+"})
+     *
      * @Entity("job", expr="repository.findActiveJob(id)")
+     *
      * @param Job $job
+     * @param JobHistoryService $jobHistoryService
      *
      * @return Response
      */
-    public function show(Job $job): Response
+    public function show(Job $job, JobHistoryService $jobHistoryService): Response
     {
+        $jobHistoryService->addJob($job);
+
         return $this->render('job/show.html.twig', [
             'job' => $job,
         ]);

@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Entity\Job;
-use App\Repository\JobRepository;
+use App\Service\JobHistoryService;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +17,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class CategoryController extends AbstractController
 {
     /**
+     * Finds and displays a category entity.
+     *
      * @Route(
      *     "/category/{slug}/{page}",
      *     name="category.show",
@@ -26,26 +28,28 @@ class CategoryController extends AbstractController
      * )
      *
      * @param Category $category
-     * @param PaginatorInterface $paginator
      * @param int $page
+     * @param PaginatorInterface $paginator
+     * @param JobHistoryService $jobHistoryService
      *
      * @return Response
      */
     public function show(
         Category $category,
+        int $page,
         PaginatorInterface $paginator,
-        int $page
+        JobHistoryService $jobHistoryService
     ) : Response {
-        /** @var JobRepository $repository */
-        $repository = $this->getDoctrine()->getRepository(Job::class);
+        $activeJobs = $paginator->paginate(
+            $this->getDoctrine()->getRepository(Job::class)->getActiveJobsByCategoryQuery($category),
+            $page,
+            $this->getParameter('max_jobs_on_category')
+        );
 
         return $this->render('category/show.html.twig', [
-            'category'   => $category,
-            'activeJobs' => $paginator->paginate(
-                $repository->getActiveJobsByCategoryQuery($category),
-                $page,
-                $this->getParameter('max_jobs_on_category')
-            ),
+            'category' => $category,
+            'activeJobs' => $activeJobs,
+            'historyJobs' => $jobHistoryService->getJobs(),
         ]);
     }
 }
