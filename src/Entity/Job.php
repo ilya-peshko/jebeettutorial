@@ -4,14 +4,27 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\JobRepository;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity(repositoryClass=JobRepository::class)
  * @ORM\Table(name="jobs")
  * @ORM\HasLifecycleCallbacks()
+ * @Vich\Uploadable
  */
 class Job
 {
+    public const FULL_TIME_TYPE = 'full-time';
+    public const PART_TIME_TYPE = 'part-time';
+    public const FREELANCE_TYPE = 'freelance';
+
+    public const TYPES = [
+        self::FULL_TIME_TYPE,
+        self::PART_TIME_TYPE,
+        self::FREELANCE_TYPE,
+    ];
 
     /**
      * @var int
@@ -30,18 +43,34 @@ class Job
     private $type;
 
     /**
+     * NOTE: This is not a mapped field of entity metadata, just a simple property.
+     *
+     * @Vich\UploadableField(mapping="job_image", fileNameProperty="imageName", size="imageSize")
+     *
+     * @var File|null
+     */
+    private $imageFile;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     *
+     * @var string|null
+     */
+    private $imageName;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     *
+     * @var int|null
+     */
+    private $imageSize;
+
+    /**
      * @var string
      *
      * @ORM\Column(type="string", length=255)
      */
     private $company;
-
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $logo;
 
     /**
      * @var string|null
@@ -164,6 +193,59 @@ class Job
     }
 
     /**
+     * @param File|UploadedFile|null $imageFile
+     */
+    public function setImageFile(?File $imageFile = null): void
+    {
+        $this->imageFile = $imageFile;
+
+        if (null !== $imageFile) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+
+    /**
+     * @return File|null
+     */
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+    /**
+     * @param string|null $imageName
+     */
+    public function setImageName(?string $imageName): void
+    {
+        $this->imageName = $imageName;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getImageName(): ?string
+    {
+        return $this->imageName;
+    }
+
+    /**
+     * @param int|null $imageSize
+     */
+    public function setImageSize(?int $imageSize): void
+    {
+        $this->imageSize = $imageSize;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getImageSize(): ?int
+    {
+        return $this->imageSize;
+    }
+    /**
      * @return string
      */
     public function getCompany(): ?string
@@ -179,26 +261,6 @@ class Job
     public function setCompany(string $company): self
     {
         $this->company = $company;
-
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getLogo(): ?string
-    {
-        return $this->logo;
-    }
-
-    /**
-     * @param string|null $logo
-     *
-     * @return self
-     */
-    public function setLogo(?string $logo): self
-    {
-        $this->logo = $logo;
 
         return $this;
     }
@@ -482,7 +544,7 @@ class Job
     /**
      * @ORM\PrePersist()
      */
-    public function prePersist()
+    public function prePersist(): void
     {
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
@@ -495,7 +557,7 @@ class Job
     /**
      * @ORM\PreUpdate()
      */
-    public function preUpdate()
+    public function preUpdate(): void
     {
         $this->updatedAt = new \DateTime();
     }

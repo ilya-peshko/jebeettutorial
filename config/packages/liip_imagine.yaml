@@ -1,0 +1,9 @@
+liip_imagine :
+
+    filter_sets :
+        cache : ~
+        image_320x240 :
+            filters :
+                thumbnail  : { size : [320, 240], mode: outbound}
+
+

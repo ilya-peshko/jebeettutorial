@@ -120,8 +120,8 @@ class Category
      */
     public function getActiveJobs()
     {
-        return $this->jobs->filter(static function(Job $job) {
-            return $job->getExpiresAt() > new \DateTime();
+        return $this->jobs->filter(function(Job $job) {
+            return $job->getExpiresAt() > new \DateTime() && $job->isActivated();
         });
     }
 
