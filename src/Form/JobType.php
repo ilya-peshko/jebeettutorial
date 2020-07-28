@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Category;
+use App\Entity\Company;
 use App\Entity\Job;
 
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -40,10 +41,11 @@ class JobType extends AbstractType
                     new NotBlank(),
                 ]
             ])
-            ->add('company', TextType::class, [
-                'constraints' => [
+            ->add('company', EntityType::class, [
+                'class'        => Company::class,
+                'choice_label' => 'name',
+                'constraints'  => [
                     new NotBlank(),
-                    new Length(['max' => 255]),
                 ]
             ])
             ->add('imageFile', VichImageType::class, [

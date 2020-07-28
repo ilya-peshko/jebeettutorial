@@ -1,18 +1,15 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\User;
 
-use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class User
  * @package App\Entity
- * @ORM\Entity(repositoryClass=UserRepository::class)
- * @ORM\Table(name="users")
  */
-Class User implements UserInterface
+Abstract class AbstractUser implements UserInterface
 {
     /**
      * @var int
@@ -76,21 +73,6 @@ Class User implements UserInterface
     public function __toString()
     {
         return (string) $this->getUsername();
-    }
-
-    /**
-     * @param $role
-     * @return $this
-     */
-    public function addRole($role): self
-    {
-        $role = strtoupper($role);
-
-        if (!in_array($role, $this->roles, true)) {
-            $this->roles[] = $role;
-        }
-
-        return $this;
     }
 
     /**
@@ -162,6 +144,20 @@ Class User implements UserInterface
         return array_values(array_unique($roles));
     }
 
+    /**
+     * @param $role
+     * @return $this
+     */
+    public function addRole($role): self
+    {
+        $role = strtoupper($role);
+
+        if (!in_array($role, $this->roles, true)) {
+            $this->roles[] = $role;
+        }
+
+        return $this;
+    }
     /**
      * @param $role
      * @return bool

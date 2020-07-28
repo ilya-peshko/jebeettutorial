@@ -66,9 +66,10 @@ class Job
     private $imageSize;
 
     /**
-     * @var string
+     * @var Company
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToOne(targetEntity="App\Entity\Company", inversedBy="jobs")
+     * @ORM\JoinColumn(name="company_id", referencedColumnName="id", nullable=false)
      */
     private $company;
 
@@ -239,19 +240,19 @@ class Job
         return $this->imageSize;
     }
     /**
-     * @return string
+     * @return Company
      */
-    public function getCompany(): ?string
+    public function getCompany(): ?Company
     {
         return $this->company;
     }
 
     /**
-     * @param string $company
+     * @param Company $company
      *
      * @return self
      */
-    public function setCompany(string $company): self
+    public function setCompany(Company $company): self
     {
         $this->company = $company;
 
