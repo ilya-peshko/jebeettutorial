@@ -35,13 +35,6 @@ class Category
     private $jobs;
 
     /**
-     * @var Affiliate[]|ArrayCollection
-     *
-     * @ORM\ManyToMany(targetEntity="Affiliate", mappedBy="categories")
-     */
-    private $affiliates;
-
-    /**
      * @var string
      *
      * @Gedmo\Slug(fields={"name"})
@@ -151,37 +144,4 @@ class Category
         return $this;
     }
 
-    /**
-     * @return Affiliate[]|ArrayCollection
-     */
-    public function getAffiliates()
-    {
-        return $this->affiliates;
-    }
-
-    /**
-     * @param Affiliate $affiliate
-     *
-     * @return self
-     */
-    public function addAffiliate($affiliate): self
-    {
-        if (!$this->affiliates->contains($affiliate)) {
-            $this->affiliates->add($affiliate);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Affiliate $affiliate
-     *
-     * @return self
-     */
-    public function removeAffiliate($affiliate): self
-    {
-        $this->affiliates->removeElement($affiliate);
-
-        return $this;
-    }
 }

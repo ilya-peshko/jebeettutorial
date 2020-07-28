@@ -108,13 +108,6 @@ class Job
     private $howToApply;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(type="string", length=255, unique=true)
-     */
-    private $token;
-
-    /**
      * @var bool
      *
      * @ORM\Column(type="boolean")
@@ -361,26 +354,6 @@ class Job
     public function setHowToApply(string $howToApply): self
     {
         $this->howToApply = $howToApply;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getToken(): ?string
-    {
-        return $this->token;
-    }
-
-    /**
-     * @param string $token
-     *
-     * @return self
-     */
-    public function setToken(string $token): self
-    {
-        $this->token = $token;
 
         return $this;
     }
