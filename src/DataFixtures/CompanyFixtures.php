@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 use App\Entity\Company;
-use App\Entity\User\Employer;
+use App\Entity\User\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -14,18 +14,19 @@ class CompanyFixtures extends Fixture implements DependentFixtureInterface
      */
     public function load(ObjectManager $manager): void
     {
-        /** @var Employer $employer_one */
-        $employer_one = $this->getReference('employer-one');
+        /** @var User $user_one */
+        $user_one = $this->getReference('user-one');
 
         $company = new Company();
-        $company->setName('Yarche')
-            ->setAddress('Pirogova')
-            ->setEmployer($employer_one);
+        $company->setName("Company - 1")
+            ->setAddress("Pirog - 1")
+            ->setUser($user_one);
 
         $manager->persist($company);
-        $manager->flush();
 
-        $this->addReference('company-yarche', $company);
+        $this->addReference("company-1", $company);
+
+        $manager->flush();
     }
 
     /**
@@ -34,7 +35,7 @@ class CompanyFixtures extends Fixture implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
-            EmployerFixtures::class,
+            UserFixtures::class,
         ];
     }
 }

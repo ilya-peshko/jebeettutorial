@@ -2,23 +2,23 @@
 
 namespace App\Repository;
 
-use App\Entity\AbstractUser;
+use App\Entity\User\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
 
 /**
- * @method AbstractUser|null find($id, $lockMode = null, $lockVersion = null)
- * @method AbstractUser|null findOneBy(array $criteria, array $orderBy = null)
- * @method AbstractUser[]    findAll()
- * @method AbstractUser[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method User|null find($id, $lockMode = null, $lockVersion = null)
+ * @method User|null findOneBy(array $criteria, array $orderBy = null)
+ * @method User[]    findAll()
+ * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class UserRepository extends ServiceEntityRepository implements UserLoaderInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, AbstractUser::class);
+        parent::__construct($registry, User::class);
     }
 
     /**

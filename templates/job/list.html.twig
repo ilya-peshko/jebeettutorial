@@ -3,13 +3,20 @@
 {% block body %}
     {% include 'job/_job_history.html.twig' with {'historyJobs': historyJobs} only %}
 
-    {% for category in categories %}
-        <h4>
-            <a href="{{ path('category.show', {slug: category.slug}) }}">{{ category.name }}</a>
-        </h4>
+    {% if categories|length %}
 
-        {% include 'job/table.html.twig' with {
-            'jobs': category.activeJobs|slice(0, max_jobs_on_homepage)
-        } only %}
-    {% endfor %}
+      `  {% for category in categories %}
+            <h4>
+                <a href="{{ path('category_show', {slug: category.slug}) }}">{{ category.name }}</a>
+            </h4>
+            {% include 'job/table.html.twig' with {
+                'jobs': category.activeJobs|slice(0, max_items_on_page)
+            } only %}
+        {% endfor %}`
+    {% else %}
+        <h4>
+            Does not active jobs. (Ссылка на создание jobov)
+        </h4>
+    {% endif %}
+    <a href="{{ path('job_create') }}" class="btn btn-default navbar-btn pull-right">Post a Job</a>
 {% endblock %}

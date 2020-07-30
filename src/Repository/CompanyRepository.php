@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Company;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -17,6 +18,47 @@ class CompanyRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Company::class);
+    }
+
+    /**
+     * @return int|mixed|string
+     */
+    public function getAllCompanies()
+    {
+        return $this->createQueryBuilder('c')
+            ->getQuery()
+            ->getResult();
+    }
+    /**
+     * @param int $id
+     *
+     * @throws NonUniqueResultException
+     *
+     * @return Company|null
+     */
+    public function findCompanyById(int $id) : ?Company
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * @return int|mixed|string
+     */
+    public function findCompanyActiveJobs()
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c')
+            ->innerJoin('c.jobs', 'j')
+            ->where('j.expiresAt > :date')
+            ->andWhere('j.activated = :activated')
+            ->setParameter('date', new \DateTime())
+            ->setParameter('activated', true)
+            ->getQuery()
+            ->getResult();
     }
 
     // /**

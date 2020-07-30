@@ -2,12 +2,13 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\User\Applicant;
+use App\Entity\User\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class ApplicantFixtures extends Fixture
+
+class UserFixtures extends Fixture
 {
     /**
      * @var UserPasswordEncoderInterface
@@ -15,7 +16,7 @@ class ApplicantFixtures extends Fixture
     protected $encoder;
 
     /**
-     * ApplicantFixtures constructor.
+     * EmployerFixtures constructor.
      * @param UserPasswordEncoderInterface $encoder
      */
     public function __construct(UserPasswordEncoderInterface $encoder)
@@ -26,16 +27,18 @@ class ApplicantFixtures extends Fixture
     /**
      * @param ObjectManager $manager
      */
-    public function load(ObjectManager $manager): void
+    public function load(ObjectManager $manager)
     {
-        $applicant = new Applicant();
-        $applicant->setUsername('Andrey')
-            ->setPassword($this->encoder->encodePassword($applicant, '321'))
-            ->setEnabled(true)
-            ->setEmail('tset@liam.eg')
-            ->setRoles(['ROLE_APPLICANT']);
+        $user = new User();
+        $user->setUsername('Ilya')
+            ->setPassword($this->encoder->encodePassword($user, '123'))
+            ->setEnabled(1)
+            ->setEmail('test@mail.ge')
+            ->setRoles(['ROLE_EMPLOYER']);
 
-        $manager->persist($applicant);
+        $manager->persist($user);
         $manager->flush();
+
+        $this->addReference('user-one', $user);
     }
 }

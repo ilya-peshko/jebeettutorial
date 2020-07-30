@@ -21,7 +21,7 @@ class CategoryController extends AbstractController
      *
      * @Route(
      *     "/category/{slug}/{page}",
-     *     name="category.show",
+     *     name="category_show",
      *     methods="GET",
      *     defaults={"page": 1},
      *     requirements={"page" = "\d+"}
@@ -43,7 +43,7 @@ class CategoryController extends AbstractController
         $activeJobs = $paginator->paginate(
             $this->getDoctrine()->getRepository(Job::class)->getActiveJobsByCategoryQuery($category),
             $page,
-            $this->getParameter('max_jobs_on_category')
+            $this->getParameter('max_items_on_page')
         );
 
         return $this->render('category/show.html.twig', [

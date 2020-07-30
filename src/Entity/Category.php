@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Traits\TimestampableEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,6 +14,8 @@ use Gedmo\Mapping\Annotation as Gedmo;
  */
 class Category
 {
+    use TimestampableEntityTrait;
+
     /**
      * @var integer
      * @ORM\Id()

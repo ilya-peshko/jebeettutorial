@@ -1,0 +1,25 @@
+<table class="table text-center">
+    <thead>
+    <tr>
+        <th class="active text-center">Name</th>
+        <th class="active text-center">Address</th>
+        <th class="active text-center">Active jobs</th>
+        <th class="active text-center">Expired jobs</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    {% for company in companies %}
+        <tr>
+            <td>
+                <a href="{{ path('company_show', {id: company.id}) }}">
+                    {{ company.name }}
+                </a>
+            </td>
+            <td>{{ company.address }}</td>
+            <td>{{ company.countActiveJobs }}</td>
+            <td>{{ company.countExpiredJobs }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

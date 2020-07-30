@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass=ApplicantRepository::class)
  * @ORM\Table(name="applicant")
  */
-class Applicant extends AbstractUser
+class Applicant extends User
 {
     /**
      * @return array

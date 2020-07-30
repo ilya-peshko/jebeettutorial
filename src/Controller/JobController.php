@@ -3,9 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Category;
+use App\Entity\Company;
 use App\Entity\Job;
+use App\Entity\User\User;
 use App\Form\JobType;
 use App\Service\JobHistoryService;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +26,7 @@ class JobController extends AbstractController
     /**
      * Lists all job entities.
      *
-     * @Route("/", name="job.list", methods="GET")
+     * @Route("/", name="job_list", methods="GET")
      *
      * @param EntityManagerInterface $em
      * @param JobHistoryService $jobHistoryService
@@ -41,7 +44,7 @@ class JobController extends AbstractController
     }
 
     /**
-     * @Route("job/{id}", name="job.show", methods="GET", requirements={"id" = "\d+"})
+     * @Route("job/{id}", name="job_show", methods="GET", requirements={"id" = "\d+"})
      *
      * @Entity("job", expr="repository.findActiveJob(id)")
      *
@@ -63,25 +66,35 @@ class JobController extends AbstractController
     }
 
     /**
-     * @Route("/job/create", name="job.create", methods={"GET", "POST"})
+     * @Route("/job/create", name="job_create", methods={"GET", "POST"})
      * @param Request $request
      * @param EntityManagerInterface $em
+     * @IsGranted("ROLE_EMPLOYER")
      *
      * @return Response
      */
     public function create(Request $request, EntityManagerInterface $em): Response
     {
+        $this->denyAccessUnlessGranted(
+            'ROLE_EMPLOYER',
+            null,
+            'User tried to access a page'
+        );
+
         $job  = new Job();
         $form = $this->createForm(JobType::class, $job);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var User $user */
+            $user = $this->getUser();
+            $job->setCompany($user->getCompany());
 
             $em->persist($job);
             $em->flush();
 
             return $this->redirectToRoute(
-                'job.list'
+                'job_list'
             );
         }
 
@@ -91,25 +104,30 @@ class JobController extends AbstractController
     }
 
     /**
-     * @Route("/job/{id}/edit", name="job.edit", methods={"GET", "POST"})
+     * @Route("/job/{id}/edit", name="job_edit", methods={"GET", "POST"})
      *
      * @param Request $request
      * @param Job $job
      * @param EntityManagerInterface $em
+     * @IsGranted("ROLE_EMPLOYER")
      *
      * @return Response
      */
     public function edit(Request $request, Job $job, EntityManagerInterface $em): Response
     {
+        $this->denyAccessUnlessGranted(
+            'ROLE_EMPLOYER',
+            null,
+            'User tried to access a page'
+        );
+
         $form = $this->createForm(JobType::class, $job);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
 
-            return $this->redirectToRoute(
-                'job.list'
-            );
+            return $this->redirectToRoute('job_list');
         }
         return $this->render('job/edit.html.twig', [
             'form' => $form->createView(),
@@ -126,13 +144,13 @@ class JobController extends AbstractController
     private function createDeleteForm(Job $job): FormInterface
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('job.delete', ['id' => $job->getId()]))
+            ->setAction($this->generateUrl('job_delete', ['id' => $job->getId()]))
             ->setMethod('DELETE')
             ->getForm();
     }
 
     /**
-     * @Route("job/{id}/edit/delete", name="job.delete", methods="DELETE")
+     * @Route("job/{id}/edit/delete", name="job_delete", methods="DELETE")
      *
      * @param Request $request
      * @param Job $job
@@ -150,6 +168,6 @@ class JobController extends AbstractController
             $em->flush();
         }
 
-        return $this->redirectToRoute('job.list');
+        return $this->redirectToRoute('job_list');
     }
 }

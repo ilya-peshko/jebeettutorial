@@ -24,7 +24,7 @@ class JobFixtures extends Fixture implements DependentFixtureInterface
         $category = $this->getReference('category-programming');
 
         /** @var Company $company */
-        $company = $this->getReference('company-yarche');
+        $company = $this->getReference('company-1');
 
         $jobExpired = new Job();
         $jobExpired->setCategory($category)

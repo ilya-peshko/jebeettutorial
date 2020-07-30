@@ -41,13 +41,6 @@ class JobType extends AbstractType
                     new NotBlank(),
                 ]
             ])
-            ->add('company', EntityType::class, [
-                'class'        => Company::class,
-                'choice_label' => 'name',
-                'constraints'  => [
-                    new NotBlank(),
-                ]
-            ])
             ->add('imageFile', VichImageType::class, [
                 'required'        => false,
                 'allow_delete'    => true,

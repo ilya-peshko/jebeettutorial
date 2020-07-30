@@ -11,6 +11,8 @@
 
     {% include 'job/table.html.twig' with {'jobs': activeJobs} only %}
 
+    <a href="{{ path('job_create') }}" class="btn btn-default navbar-btn pull-right">Post a Job</a>
+
     <div class="navigation text-center">
         {{ knp_pagination_render(activeJobs) }}
     </div>

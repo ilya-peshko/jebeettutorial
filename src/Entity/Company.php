@@ -2,17 +2,25 @@
 
 namespace App\Entity;
 
-use App\Entity\User\Employer;
+use App\Entity\Traits\ImageTrait;
+use App\Entity\Traits\TimestampableEntityTrait;
 use App\Repository\CompanyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity(repositoryClass=CompanyRepository::class)
  * @ORM\Table(name="company")
+ * @Vich\Uploadable
  */
-class Company
+class Company implements \Serializable
 {
+    use ImageTrait;
+    use TimestampableEntityTrait;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -36,19 +44,17 @@ class Company
     private $phone;
 
     /**
-     * @var Employer
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\User\Employer", inversedBy="companies")
-     * @ORM\JoinColumn(name="employer_id", referencedColumnName="id", nullable=false)
-     */
-    private $employer;
-
-    /**
      * @var Job[]|ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="App\Entity\Job", mappedBy="company")
+     * @ORM\OneToMany(targetEntity="App\Entity\Job", mappedBy="company", cascade={"persist", "remove"})
      */
     private $jobs;
+
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\User\User", inversedBy="company")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
+     */
+    private $user;
 
     /**
      * Company constructor.
@@ -124,25 +130,6 @@ class Company
     }
 
     /**
-     * @return Employer
-     */
-    public function getEmployer(): Employer
-    {
-        return $this->employer;
-    }
-
-    /**
-     * @param Employer $employer
-     * @return $this
-     */
-    public function setEmployer(Employer $employer): self
-    {
-        $this->employer = $employer;
-
-        return $this;
-    }
-
-    /**
      * @return Job[]|ArrayCollection
      */
     public function getJobs()
@@ -185,10 +172,68 @@ class Company
     }
 
     /**
+     * @return int
+     */
+    public function getCountActiveJobs(): int
+    {
+        return count($this->jobs->filter(static function(Job $job) {
+            return $job->getExpiresAt() > new \DateTime() && $job->isActivated();
+        }));
+    }
+
+    /**
+     * @return int
+     */
+    public function getCountExpiredJobs(): int
+    {
+        return count($this->jobs->filter(static function(Job $job) {
+            return $job->getExpiresAt() < new \DateTime();
+        }));
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param mixed $user
+     * @return $this
+     */
+    public function setUser($user): self
+    {
+        $this->user = $user;
+        return $this;
+    }
+
+    /**
      * @return mixed
      */
     public function __toString()
     {
         return $this->name;
+    }
+
+    /**
+     * @see \Serializable::serialize()
+     */
+    public function serialize(): string
+    {
+        return serialize([
+            $this->id,
+            $this->imageName,
+        ]);
+    }
+
+    /**
+     * @param $serialized
+     * @see \Serializable::unserialize()
+     */
+    public function unserialize($serialized): void
+    {
+        [$this->id,] = unserialize($serialized, ['']);
     }
 }

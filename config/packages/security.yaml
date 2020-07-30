@@ -4,10 +4,10 @@ security:
         app_users_provider:
             entity:
                 # the class of the entity that represents users
-                class: 'App\Entity\User'
+                class: 'App\Entity\User\User'
 
     encoders:
-        App\Entity\User:
+        App\Entity\User\User:
             algorithm: bcrypt
 
     role_hierarchy:
@@ -25,7 +25,8 @@ security:
                 provider: app_users_provider
                 csrf_token_generator: security.csrf.token_manager
 
-            logout: true
+            logout:
+                path:   app_logout
             anonymous: true
             guard:
                 authenticators:

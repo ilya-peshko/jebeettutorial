@@ -3,13 +3,14 @@
 namespace App\Entity\User;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UserRepository;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * Class User
- * @package App\Entity
+ * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @ORM\Table(name="user")
  */
-Abstract class AbstractUser implements UserInterface
+class User implements UserInterface
 {
     /**
      * @var int
@@ -59,6 +60,11 @@ Abstract class AbstractUser implements UserInterface
     protected $roles;
 
     /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Company",  mappedBy="user")
+     */
+    protected $company;
+
+    /**
      * User constructor.
      */
     public function __construct()
@@ -72,7 +78,7 @@ Abstract class AbstractUser implements UserInterface
      */
     public function __toString()
     {
-        return (string) $this->getUsername();
+        return $this->getUsername();
     }
 
     /**
@@ -257,5 +263,41 @@ Abstract class AbstractUser implements UserInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCompany()
+    {
+        return $this->company;
+    }
+
+    /**
+     * @param $company
+     * @return $this
+     */
+    public function setCompany($company): self
+    {
+        $this->company = $company;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMeta(): string
+    {
+        $userRole = 'anonymous';
+
+        if ($this->hasRole('ROLE_ADMIN')) {
+            $userRole = 'Admin';
+        } elseif ($this->hasRole('ROLE_EMPLOYER')) {
+            $userRole = 'Employer';
+        } elseif ($this->hasRole('ROLE_APPLICANT')) {
+            $userRole = 'Applicant';
+        }
+
+        return $userRole;
     }
 }

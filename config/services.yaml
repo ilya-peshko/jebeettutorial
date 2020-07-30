@@ -5,10 +5,10 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'en'
-    max_jobs_on_homepage: 10
-    max_jobs_on_category: 20
+    max_items_on_page: 10
     jobs_directory: '%kernel.project_dir%/public/uploads/jobs'
     jobs_web_directory: '/uploads/jobs'
+    image_directory: '/uploads/image'
 
 services:
     # default configuration for services in *this* file

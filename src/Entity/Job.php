@@ -2,10 +2,10 @@
 
 namespace App\Entity;
 
+use App\Entity\Traits\ImageTrait;
+use App\Entity\Traits\TimestampableEntityTrait;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\JobRepository;
-use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
@@ -16,6 +16,9 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  */
 class Job
 {
+    use ImageTrait;
+    use TimestampableEntityTrait;
+
     public const FULL_TIME_TYPE = 'full-time';
     public const PART_TIME_TYPE = 'part-time';
     public const FREELANCE_TYPE = 'freelance';
@@ -41,29 +44,6 @@ class Job
      * @ORM\Column(type="string", length=255)
      */
     private $type;
-
-    /**
-     * NOTE: This is not a mapped field of entity metadata, just a simple property.
-     *
-     * @Vich\UploadableField(mapping="job_image", fileNameProperty="imageName", size="imageSize")
-     *
-     * @var File|null
-     */
-    private $imageFile;
-
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     *
-     * @var string|null
-     */
-    private $imageName;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     *
-     * @var int|null
-     */
-    private $imageSize;
 
     /**
      * @var Company
@@ -137,20 +117,6 @@ class Job
     private $expiresAt;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(type="datetime")
-     */
-    private $updatedAt;
-
-    /**
      * @var Category
      *
      * @ORM\ManyToOne(targetEntity="Category", inversedBy="jobs")
@@ -186,59 +152,6 @@ class Job
         return $this;
     }
 
-    /**
-     * @param File|UploadedFile|null $imageFile
-     */
-    public function setImageFile(?File $imageFile = null): void
-    {
-        $this->imageFile = $imageFile;
-
-        if (null !== $imageFile) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = new \DateTimeImmutable();
-        }
-    }
-
-    /**
-     * @return File|null
-     */
-    public function getImageFile(): ?File
-    {
-        return $this->imageFile;
-    }
-
-    /**
-     * @param string|null $imageName
-     */
-    public function setImageName(?string $imageName): void
-    {
-        $this->imageName = $imageName;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getImageName(): ?string
-    {
-        return $this->imageName;
-    }
-
-    /**
-     * @param int|null $imageSize
-     */
-    public function setImageSize(?int $imageSize): void
-    {
-        $this->imageSize = $imageSize;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getImageSize(): ?int
-    {
-        return $this->imageSize;
-    }
     /**
      * @return Company
      */
@@ -429,31 +342,15 @@ class Job
 
     /**
      * @param \DateTime $expiresAt
-     *
-     * @return self
+     * @return Job
      */
-    public function setExpiresAt(\DateTime $expiresAt): self
+    public function setExpiresAt(\DateTime $expiresAt): Job
     {
         $this->expiresAt = $expiresAt;
 
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt(): ?\DateTime
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt(): ?\DateTime
-    {
-        return $this->updatedAt;
-    }
 
     /**
      * @return Category
