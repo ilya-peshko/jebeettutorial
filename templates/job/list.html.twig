@@ -13,10 +13,10 @@
                 'jobs': category.activeJobs|slice(0, max_items_on_page)
             } only %}
         {% endfor %}`
+        <a href="{{ path('job_create') }}" class="btn btn-default navbar-btn pull-right">Post a Job</a>
     {% else %}
         <h4>
-            Does not active jobs. (Ссылка на создание jobov)
+            Does not active jobs. <a href="{{ path('job_create') }}">Create a job.</a>
         </h4>
     {% endif %}
-    <a href="{{ path('job_create') }}" class="btn btn-default navbar-btn pull-right">Post a Job</a>
 {% endblock %}

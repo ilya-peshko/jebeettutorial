@@ -19,25 +19,25 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    protected $id;
+    private $id;
 
     /**
      * @var string
      * @ORM\Column(type="string", length=25, unique=true)
      */
-    protected $username;
+    private $username;
 
     /**
      * @var string
      * @ORM\Column(type="string", length=254, unique=true)
      */
-    protected $email;
+    private $email;
 
     /**
      * @var bool
      * @ORM\Column(name="enabled", type="boolean")
      */
-    protected $enabled;
+    private $enabled;
 
     /**
      * Encrypted password. Must be persisted.
@@ -45,24 +45,29 @@ class User implements UserInterface
      * @var string
      * @ORM\Column(type="string")
      */
-    protected $password;
+    private $password;
 
     /**
      * @var \DateTime|null
      * @ORM\Column(type="datetime", nullable=true)
      */
-    protected $lastLogin;
+    private $lastLogin;
 
     /**
      * @var array
      * @ORM\Column(type="json")
      */
-    protected $roles;
+    private $roles;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Company",  mappedBy="user")
+     * @ORM\OneToOne(targetEntity="App\Entity\Company", mappedBy="user")
      */
-    protected $company;
+    private $company;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Resume", mappedBy="user", cascade={"persist", "remove"})
+     */
+    private $resumes;
 
     /**
      * User constructor.
@@ -282,6 +287,7 @@ class User implements UserInterface
         $this->company = $company;
         return $this;
     }
+
 
     /**
      * @return string

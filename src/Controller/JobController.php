@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Category;
-use App\Entity\Company;
 use App\Entity\Job;
 use App\Entity\User\User;
 use App\Form\JobType;
@@ -56,7 +55,8 @@ class JobController extends AbstractController
     public function show(Job $job, JobHistoryService $jobHistoryService): Response
     {
         $jobHistoryService->addJob($job);
-        $deleteForm  = $this->createDeleteForm($job);
+
+        $deleteForm   = $this->createDeleteForm($job);
 
         return $this->render('job/show.html.twig', [
             'job'              => $job,
@@ -86,6 +86,7 @@ class JobController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
             /** @var User $user */
             $user = $this->getUser();
             $job->setCompany($user->getCompany());
@@ -155,11 +156,18 @@ class JobController extends AbstractController
      * @param Request $request
      * @param Job $job
      * @param EntityManagerInterface $em
+     * @IsGranted("ROLE_EMPLOYER")
      *
      * @return Response
      */
     public function delete(Request $request, Job $job, EntityManagerInterface $em): Response
     {
+        $this->denyAccessUnlessGranted(
+            'ROLE_EMPLOYER',
+            null,
+            'User tried to access a page'
+        );
+
         $form = $this->createDeleteForm($job);
         $form->handleRequest($request);
 
@@ -170,4 +178,6 @@ class JobController extends AbstractController
 
         return $this->redirectToRoute('job_list');
     }
+
+
 }

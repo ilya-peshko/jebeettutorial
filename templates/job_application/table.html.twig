@@ -1,0 +1,29 @@
+<table class="table text-center">
+    <thead>
+    <tr>
+        <th class="active text-center">Resume</th>
+        <th class="active text-center">Description</th>
+        <th class="active text-center">Company name</th>
+        <th class="active text-center">Viewed</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    {% for jobApplication in jobApplications %}
+        <tr>
+            <td>
+                <a href="{{ path('resume_show', {id:jobApplication.resume.id}) }}">
+                    {{ jobApplication.resume.title }}
+                </a>
+            </td>
+            <td>{{ jobApplication.job.description }}</td>
+            <td>
+                <a href="{{ path('company_show', {id:jobApplication.job.company.id}) }}">
+                    {{ jobApplication.job.company.name }}
+                </a>
+            </td>
+            <td>{% if jobApplication.viewed %} true {% else %} false {% endif %}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

@@ -37,8 +37,19 @@ class UserFixtures extends Fixture
             ->setRoles(['ROLE_EMPLOYER']);
 
         $manager->persist($user);
+
+        $user_two = new User();
+        $user_two->setUsername('Andy')
+            ->setPassword($this->encoder->encodePassword($user_two, '123'))
+            ->setEnabled(1)
+            ->setEmail('applicant@mail.ge')
+            ->setRoles(['ROLE_APPLICANT']);
+
+        $manager->persist($user_two);
+
         $manager->flush();
 
         $this->addReference('user-one', $user);
+        $this->addReference('user-applicant', $user_two);
     }
 }

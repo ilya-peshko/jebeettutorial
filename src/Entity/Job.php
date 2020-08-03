@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Entity\Traits\ImageTrait;
 use App\Entity\Traits\TimestampableEntityTrait;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\JobRepository;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
@@ -125,6 +127,16 @@ class Job
     private $category;
 
     /**
+     * @ORM\OneToMany(targetEntity=JobApplication::class, mappedBy="job", cascade={"persist", "remove"})
+     */
+    private $jobApplications;
+
+    public function __construct()
+    {
+        $this->jobApplications = new ArrayCollection();
+    }
+
+    /**
      * @return int
      */
     public function getId(): ?int
@@ -155,7 +167,7 @@ class Job
     /**
      * @return Company
      */
-    public function getCompany(): ?Company
+    public function getCompany(): Company
     {
         return $this->company;
     }
@@ -431,5 +443,44 @@ class Job
     public function preUpdate(): void
     {
         $this->updatedAt = new \DateTime();
+    }
+
+    /**
+     * @return Collection|JobApplication[]
+     */
+    public function getJobApplications(): Collection
+    {
+        return $this->jobApplications;
+    }
+
+    /**
+     * @param JobApplication $jobApplication
+     * @return $this
+     */
+    public function addJobApplication(JobApplication $jobApplication): self
+    {
+        if (!$this->jobApplications->contains($jobApplication)) {
+            $this->jobApplications[] = $jobApplication;
+            $jobApplication->setJob($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param JobApplication $jobApplication
+     * @return $this
+     */
+    public function removeJobApplication(JobApplication $jobApplication): self
+    {
+        if ($this->jobApplications->contains($jobApplication)) {
+            $this->jobApplications->removeElement($jobApplication);
+            // set the owning side to null (unless already changed)
+            if ($jobApplication->getJob() === $this) {
+                $jobApplication->setJob(null);
+            }
+        }
+
+        return $this;
     }
 }

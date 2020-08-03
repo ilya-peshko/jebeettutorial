@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block create_company %}
+    <a href="{{ path('company_create') }}" class="btn btn-default navbar-btn">Add company</a>
+{% endblock %}
+
+{% block create_job %}{% endblock %}
+
+{% block body %}
+
+        {% include 'resume/control_panel.html.twig' with {
+            'resume': resume,
+            'deleteForm': deleteForm,
+        } only %}
+    <h1>Resume</h1>
+    <div class="media" style="margin-top: 60px;">
+        <div class="media-body">
+            <div class="row">
+                <div class="col-sm-10">
+                    <h3 class="media-heading"><strong>{{ resume.title }}</strong></h3>
+                </div>
+                <div class="col-sm-10">
+                    <p>
+                    <h2><strong>{{ resume.aboutMe }}</strong></h2>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

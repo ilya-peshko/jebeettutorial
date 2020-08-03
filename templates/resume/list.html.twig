@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block create_job %}{% endblock %}
+
+{% block body %}
+
+    {% if resumes|length %}
+        {% include 'resume/table.html.twig' with {
+            'resumes': resumes,
+        } only %}
+    {% else %}
+        <h4>
+            Need to create resume.
+        </h4>
+    {% endif %}
+
+    <a href="{{ path('resume_create') }}" class="btn btn-default pull-right">Add resume</a>
+
+    <div class="navigation text-center">
+        {{ knp_pagination_render(resumes) }}
+    </div>
+
+{% endblock %}

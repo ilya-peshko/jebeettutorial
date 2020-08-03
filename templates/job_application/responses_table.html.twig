@@ -1,0 +1,21 @@
+<table class="table text-center">
+    <thead>
+    <tr>
+        <th class="active text-center">Resume</th>
+        <th class="active text-center">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    {% for jobApplication in jobApplications %}
+        <tr>
+            <td>
+                <a href="{{ path('resume_show', {id:jobApplication.resume.id}) }}?id={{ jobApplication.id }}">
+                    {{ jobApplication.resume.title }}
+                </a>
+            </td>
+            <td>{{ jobApplication.job.description }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

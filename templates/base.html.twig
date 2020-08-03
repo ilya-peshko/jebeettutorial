@@ -17,15 +17,46 @@
         <div class="navbar-header">
             <a class="navbar-brand" href="{{ path('job_list') }}">Jobeet</a>
         </div>
-
         <div class="collapse navbar-collapse">
+
+            {% if app.user and app.user.role('ROLE_EMPLOYER') %}
             <ul class="nav navbar-nav navbar-left">
                 <li>
                     <div>
-                        <a href="{{ path('company_list') }}" class="btn btn-online-info navbar-btn">My companies</a>
+                        <a href="{{ path('company_list') }}" class="btn btn-online-info navbar-btn">
+                            My companies
+                        </a>
+                    </div>
+                </li>
+                <li>
+                    <div>
+                        <a href="{{ path('job_application_responses') }}" class="btn btn-online-info navbar-btn">
+                            My responses
+                        </a>
                     </div>
                 </li>
             </ul>
+            {% endif %}
+
+            {% if app.user and app.user.role('ROLE_APPLICANT') %}
+                <ul class="nav navbar-nav navbar-left">
+                    <li>
+                        <div>
+                            <a href="{{ path('resume_list') }}" class="btn btn-online-info navbar-btn">
+                                My resumes
+                            </a>
+                        </div>
+                    </li>
+                    <li>
+                        <div>
+                            <a href="{{ path('job_application_list') }}" class="btn btn-online-info navbar-btn">
+                                My responses
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            {% endif %}
+
             <div class="nav navbar-nav navbar-right">
                 {% if app.user %}
                     <p class ="navbar-brand">{{ app.user.username }}</p>

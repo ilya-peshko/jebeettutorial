@@ -1,0 +1,21 @@
+<table class="table text-center">
+    <thead>
+    <tr>
+        <th class="active text-center">applicant</th>
+        <th class="active text-center">about</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    {% for resume in resumes %}
+        <tr>
+            <td>
+                <a href="{{ path('resume_show', {id: resume.id}) }}">
+                    {{ resume. title }}
+                </a>
+            </td>
+            <td>{{ resume.aboutMe }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

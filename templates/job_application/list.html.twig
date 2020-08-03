@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block create_job %}{% endblock %}
+
+{% block body %}
+
+    {% if jobApplications|length %}
+        {% include 'job_application/table.html.twig' with {
+            'jobApplications': jobApplications
+        } only %}
+    {% else %}
+        <h4>
+            No active job applications.
+        </h4>
+    {% endif %}
+
+    <div class="navigation text-center">
+        {{ knp_pagination_render(jobApplications) }}
+    </div>
+
+{% endblock %}

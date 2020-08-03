@@ -12,6 +12,14 @@
                 Delete
             </button>
             {{ form_end(deleteForm) }}
+
+            {% if app.user and app.user.role('ROLE_APPLICANT')%}
+                <a class="btn btn-default navbar-btn" href="{{ path('resume_choice', {id:job.id}) }}">
+                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                    Response
+                </a>
+            {% endif %}
+
             {% if job.activated %}
                 {% if job.expiresAt < date() %}
                     <p class="navbar-text ">Expired</p>

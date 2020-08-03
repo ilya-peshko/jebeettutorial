@@ -61,15 +61,12 @@ class CompanyController extends AbstractController
      *     defaults={"page": 1},
      *     requirements={"page" = "\d+"}
      * )
-     *
-     * @param EntityManagerInterface $em
      * @param int $page
      * @param PaginatorInterface $paginator
      *
-     *
      * @return Response
      */
-    public function list(EntityManagerInterface $em, PaginatorInterface $paginator, int $page): Response
+    public function list(PaginatorInterface $paginator, int $page): Response
     {
         $companies = $paginator->paginate(
             $this->getDoctrine()->getRepository(Company::class)->getAllCompanies(),
@@ -133,8 +130,6 @@ class CompanyController extends AbstractController
     }
 
     /**
-     * Creates a form to delete a job entity.
-     *
      * @param Company $company
      *
      * @return FormInterface

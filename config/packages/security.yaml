@@ -12,8 +12,8 @@ security:
 
     role_hierarchy:
         ROLE_EMPLOYER: ROLE_USER
-        ROLE_APPLICAN: ROLE_USER
-        ROLE_ADMIN: [ROLE_EMPLOYER, ROLE_APPLICAN, ROLE_USER]
+        ROLE_APPLICANT: ROLE_USER
+        ROLE_ADMIN: [ROLE_EMPLOYER, ROLE_APPLICANT, ROLE_USER]
 
     firewalls:
         dev:
