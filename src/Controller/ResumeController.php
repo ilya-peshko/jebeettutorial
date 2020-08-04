@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Job;
 use App\Entity\JobApplication;
 use App\Entity\Resume;
+use App\Entity\Traits\FormTrait;
 use App\Entity\User\User;
 use App\Form\ResumeType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,21 +21,25 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ResumeController extends AbstractController
 {
+    use FormTrait;
+
     /**
      * @Route(
      *     "/resume/list/{page}",
      *     name="resume_list",
-     *     methods="GET",
+     *     methods={"GET", "POST"},
      *     defaults={"page": 1},
      *     requirements={"page" = "\d+"}
      * )
      * @param int $page
      * @param PaginatorInterface $paginator
+     * @param Request $request
+     *
      * @IsGranted("ROLE_APPLICANT")
      *
      * @return Response
      */
-    public function list(PaginatorInterface $paginator, int $page): Response
+    public function list(PaginatorInterface $paginator, int $page, Request $request): Response
     {
         $this->denyAccessUnlessGranted(
             'ROLE_APPLICANT',
@@ -42,16 +47,25 @@ class ResumeController extends AbstractController
             'User tried to access a page'
         );
 
+        $search = null;
+        $form = $this->createSearchForm();
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $search = $request->request->get('form')['Request'];
+        }
+
         /** @var User $user */
         $user = $this->getUser();
         $resumes = $paginator->paginate(
-            $this->getDoctrine()->getRepository(Resume::class)->getAllResumesByUser($user),
+            $this->getDoctrine()->getRepository(Resume::class)->getAllResumesByUser($user, $search),
             $page,
             $this->getParameter('max_items_on_page')
         );
 
         return $this->render('resume/list.html.twig', [
             'resumes'  => $resumes,
+            'searchForm' => $form->createView(),
         ]);
     }
 

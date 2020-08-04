@@ -3,16 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\Company;
+use App\Entity\User\User;
 use App\Form\CompanyType;
 use Doctrine\ORM\EntityManagerInterface;
-use Knp\Component\Pager\PaginatorInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 
 class CompanyController extends AbstractController
 {
@@ -42,7 +42,7 @@ class CompanyController extends AbstractController
             $em->flush();
 
             return $this->redirectToRoute(
-                'company_list'
+                'company_show'
             );
         }
 
@@ -52,50 +52,51 @@ class CompanyController extends AbstractController
     }
 
     /**
-     * Lists all company entities.
+     * @Route("company/show", name="company_show", methods="GET", requirements={"id" = "\d+"})
      *
-     * @Route(
-     *     "/company/list/{page}",
-     *     name="company_list",
-     *     methods="GET",
-     *     defaults={"page": 1},
-     *     requirements={"page" = "\d+"}
-     * )
-     * @param int $page
-     * @param PaginatorInterface $paginator
+     * @IsGranted("ROLE_EMPLOYER")
      *
      * @return Response
      */
-    public function list(PaginatorInterface $paginator, int $page): Response
+    public function show(): Response
     {
-        $companies = $paginator->paginate(
-            $this->getDoctrine()->getRepository(Company::class)->getAllCompanies(),
-            $page,
-            $this->getParameter('max_items_on_page')
+        /** @var User $user */
+        $user = $this->getUser();
+        $this->denyAccessUnlessGranted(
+            'ROLE_EMPLOYER',
+            null,
+            'User tried to access a page'
         );
 
-        return $this->render('company/list.html.twig', [
-            'companies'  => $companies
+        /** @var Company $company */
+        $company =  $this->getDoctrine()->getRepository(Company::class)->getCompanyByUser($user);
+
+        return $this->render('company/show.html.twig', [
+            'company'    => $company,
         ]);
     }
 
     /**
-     * @Route("/company/{id}/edit", name="company_edit", methods={"GET", "POST"})
+     * @Route("/company/edit", name="company_edit", methods={"GET", "POST"})
      *
      * @param Request $request
-     * @param Company $company
      * @param EntityManagerInterface $em
      * @IsGranted("ROLE_EMPLOYER")
      *
      * @return Response
      */
-    public function edit(Request $request, Company $company, EntityManagerInterface $em): Response
+    public function edit(Request $request, EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted(
             'ROLE_EMPLOYER',
             null,
             'User tried to access a page'
         );
+        /** @var User $user */
+        $user = $this->getUser();
+
+        /** @var Company $company */
+        $company =  $this->getDoctrine()->getRepository(Company::class)->getCompanyByUser($user);
 
         $form = $this->createForm(CompanyType::class, $company);
         $form->handleRequest($request);
@@ -103,7 +104,7 @@ class CompanyController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
 
-            return $this->redirectToRoute('company_list');
+            return $this->redirectToRoute('company_show');
         }
         return $this->render('company/edit.html.twig', [
             'form' => $form->createView(),
@@ -111,40 +112,8 @@ class CompanyController extends AbstractController
     }
 
     /**
-     * @Route("company/{id}", name="company_show", methods="GET", requirements={"id" = "\d+"})
-     *
-     * @Entity("company", expr="repository.findCompanyById(id)")
-     *
-     * @param Company $company
-     *
-     * @return Response
-     */
-    public function show(Company $company): Response
-    {
-        $deleteForm = $this->createDeleteForm($company);
-
-        return $this->render('company/show.html.twig', [
-            'company'    => $company,
-            'deleteForm' => $deleteForm->createView(),
-        ]);
-    }
-
-    /**
-     * @param Company $company
-     *
-     * @return FormInterface
-     */
-    private function createDeleteForm(Company $company): FormInterface
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('company_delete', ['id' => $company->getId()]))
-            ->setMethod('DELETE')
-            ->getForm();
-    }
-
-    /**
-     * @Route("company/{id}/edit/delete", name="company_delete", methods="DELETE")
-     *
+     * @Route("company/edit/delete/{id}", name="company_delete", methods="GET")
+     * @Entity("company", expr="repository.find(id)")
      * @param Request $request
      * @param Company $company
      * @param EntityManagerInterface $em
@@ -153,14 +122,12 @@ class CompanyController extends AbstractController
      */
     public function delete(Request $request, Company $company, EntityManagerInterface $em): Response
     {
-        $form = $this->createDeleteForm($company);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->remove($company);
-            $em->flush();
+        if ($this->getUser() !== $company->getUser()) {
+            throw new Exception('You not have permissions');
         }
+        $em->remove($company);
+        $em->flush();
 
-        return $this->redirectToRoute('company_list');
+        return $this->redirectToRoute('company_show');
     }
 }

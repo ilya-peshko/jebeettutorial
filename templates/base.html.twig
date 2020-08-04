@@ -23,11 +23,12 @@
             <ul class="nav navbar-nav navbar-left">
                 <li>
                     <div>
-                        <a href="{{ path('company_list') }}" class="btn btn-online-info navbar-btn">
-                            My companies
+                        <a href="{{ path('company_show') }}" class="btn btn-online-info navbar-btn">
+                            My company
                         </a>
                     </div>
                 </li>
+                {% if app.user.company|length %}
                 <li>
                     <div>
                         <a href="{{ path('job_application_responses') }}" class="btn btn-online-info navbar-btn">
@@ -35,6 +36,7 @@
                         </a>
                     </div>
                 </li>
+                {% endif %}
             </ul>
             {% endif %}
 

@@ -24,18 +24,28 @@ class CategoryRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param null $request
      * @return int|mixed|string
      */
-    public function findWithActiveJobs()
+    public function findWithActiveJobs($request = null)
     {
-        return $this->createQueryBuilder('c')
+        $result = $this->createQueryBuilder('c')
             ->select('c')
             ->innerJoin('c.jobs', 'j')
             ->where('j.expiresAt > :date')
             ->andWhere('j.activated = :activated')
             ->setParameter('date', new \DateTime())
-            ->setParameter('activated', true)
-            ->getQuery()
+            ->setParameter('activated', true);
+
+        if ($request) {
+            $result->andWhere('j.title LIKE :request')
+                ->orWhere('j.description LIKE :request')
+                ->orWhere('j.type LIKE :request')
+                ->orWhere('j.email LIKE :request')
+                ->setParameter('request', "%$request%");
+        }
+
+        return $result->getQuery()
             ->getResult();
     }
 

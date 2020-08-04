@@ -3,8 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Company;
+use App\Entity\User\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -21,26 +23,15 @@ class CompanyRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return int|mixed|string
-     */
-    public function getAllCompanies()
-    {
-        return $this->createQueryBuilder('c')
-            ->getQuery()
-            ->getResult();
-    }
-    /**
-     * @param int $id
-     *
-     * @throws NonUniqueResultException
-     *
+     * @param User $user
      * @return Company|null
+     * @throws NonUniqueResultException
      */
-    public function findCompanyById(int $id) : ?Company
+    public function getCompanyByUser(User $user): ?Company
     {
         return $this->createQueryBuilder('c')
-            ->where('c.id = :id')
-            ->setParameter('id', $id)
+            ->andWhere('c.user = :user')
+            ->setParameter('user', $user)
             ->getQuery()
             ->getOneOrNullResult();
     }
@@ -85,7 +76,7 @@ class CompanyRepository extends ServiceEntityRepository
             ->andWhere('c.exampleField = :val')
             ->setParameter('val', $value)
             ->getQuery()
-            ->getOneOrNullResult()
+
         ;
     }
     */

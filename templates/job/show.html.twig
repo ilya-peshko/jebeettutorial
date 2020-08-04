@@ -2,10 +2,12 @@
 
 {% block body %}
 
+    {% if app.user and (app.user is same as(job.company.user)) %}
         {% include 'job/control_panel.html.twig' with {
             'job': job,
             'deleteForm': deleteForm,
         } only %}
+    {% endif %}
 
     {% for message in app.flashes('notice') %}
     <div class="alert alert-success" role="alert">

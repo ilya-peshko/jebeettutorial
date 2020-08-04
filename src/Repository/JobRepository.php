@@ -8,6 +8,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
+use http\Env\Request;
 
 /**
  * @method Job|null find($id, $lockMode = null, $lockVersion = null)
@@ -70,19 +71,28 @@ class JobRepository extends ServiceEntityRepository
 
     /**
      * @param Category $category
-     *
+     * @param null $request
      * @return AbstractQuery
      */
-    public function getActiveJobsByCategoryQuery(Category $category) : AbstractQuery
+    public function getActiveJobsByCategoryQuery(Category $category, $request = null) : AbstractQuery
     {
-        return $this->createQueryBuilder('j')
+        $jobs = $this->createQueryBuilder('j')
             ->where('j.category = :category')
             ->andWhere('j.expiresAt > :date')
             ->andWhere('j.activated = :activated')
             ->setParameter('category', $category)
             ->setParameter('date', new \DateTime())
-            ->setParameter('activated', true)
-            ->getQuery();
+            ->setParameter('activated', true);
+        if($request){
+            $jobs->andWhere('j.type LIKE :request')
+                ->orWhere('j.title LIKE :request')
+                ->orWhere('j.description LIKE :request')
+                ->orWhere('j.howToApply LIKE :request')
+                ->orWhere('j.position LIKE :request')
+                ->orWhere('j.location LIKE :request')
+                ->setParameter('request', $request);
+        }
+        return $jobs->getQuery();
     }
 
     /*

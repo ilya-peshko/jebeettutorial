@@ -41,6 +41,11 @@ class JobType extends AbstractType
                     new NotBlank(),
                 ]
             ])
+            ->add('title', TextType::class, [
+                'constraints' => [
+                    new NotBlank(),
+                ]
+            ])
             ->add('imageFile', VichImageType::class, [
                 'required'        => false,
                 'allow_delete'    => true,

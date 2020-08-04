@@ -22,25 +22,26 @@ class ResumeRepository extends ServiceEntityRepository
 
     /**
      * @param User $user
-     *
+     * @param null $request
      * @return array
      */
-    public function getAllResumesByUser(User $user): array
+    public function getAllResumesByUser(User $user, $request = null): array
     {
-        return $this->createQueryBuilder('r')
+        $resumes = $this->createQueryBuilder('r')
             ->andWhere('r.user = :applicant')
-            ->setParameter('applicant', $user)
-            ->getQuery()
-            ->getResult();
-    }
+            ->setParameter('applicant', $user);
 
-    public function findResumeById($id)
-    {
-        return $this->createQueryBuilder('r')
-        ->andWhere('r.id = :id')
-        ->setParameter('id', $id)
-        ->getQuery()
-        ->getOneOrNullResult();
+        if ($request) {
+            $resumes->andWhere('r.title LIKE :request')
+                ->orWhere('r.cityOfResidence LIKE :request')
+                ->orWhere('r.name LIKE :request')
+                ->orWhere('r.surname LIKE :request')
+                ->orWhere('r.aboutMe LIKE :request')
+                ->setParameter('request', "%$request%");
+        }
+
+        return $resumes->getQuery()
+            ->getResult();
     }
     // /**
     //  * @return Resume[] Returns an array of Resume objects

@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 
-{% block create_job %}{% endblock %}
-
 {% block body %}
+
+    {% include 'base_search_form.html.twig' with {'search_form': searchForm} only %}
 
     {% if resumes|length %}
         {% include 'resume/table.html.twig' with {

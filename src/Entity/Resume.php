@@ -22,25 +22,63 @@ class Resume
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User\User", inversedBy="resumes")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
+     * @var string
+     *
+     * @ORM\Column(type="string", length=50)
      */
-    private $user;
+    private $name;
 
     /**
      * @var string
+     *
+     * @ORM\Column(type="string", length=50)
+     */
+    private $surname;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=50)
+     */
+    private $cityOfResidence;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=20)
+     */
+    private $gender;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(type="datetime")
+     */
+    private $dateOfBirthday;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(type="string", length=255)
      */
     private $title;
 
     /**
      * @var string
+     *
      * @ORM\Column(type="text")
      */
     private $aboutMe;
 
     /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User\User", inversedBy="resumes")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
+     */
+    private $user;
+
+    /**
      * @var int
+     *
      * @ORM\Column(type="integer")
      */
     private $viewsCount;
@@ -65,6 +103,96 @@ class Resume
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     * @return Resume
+     */
+    public function setName(string $name): Resume
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSurname(): ?string
+    {
+        return $this->surname;
+    }
+
+    /**
+     * @param string $surname
+     * @return Resume
+     */
+    public function setSurname(string $surname): Resume
+    {
+        $this->surname = $surname;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCityOfResidence(): ?string
+    {
+        return $this->cityOfResidence;
+    }
+
+    /**
+     * @param string $cityOfResidence
+     * @return Resume
+     */
+    public function setCityOfResidence(string $cityOfResidence): Resume
+    {
+        $this->cityOfResidence = $cityOfResidence;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    /**
+     * @param string $gender
+     * @return Resume
+     */
+    public function setGender(string $gender): Resume
+    {
+        $this->gender = $gender;
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getDateOfBirthday(): ?\DateTime
+    {
+        return $this->dateOfBirthday;
+    }
+
+    /**
+     * @param \DateTime $dateOfBirthday
+     * @return Resume
+     */
+    public function setDateOfBirthday(\DateTime $dateOfBirthday): Resume
+    {
+        $this->dateOfBirthday = $dateOfBirthday;
+        return $this;
     }
 
     /**

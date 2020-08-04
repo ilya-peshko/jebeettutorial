@@ -48,6 +48,13 @@ class Job
     private $type;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="title", type="string", length=255)
+     */
+    private $title;
+
+    /**
      * @var Company
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Company", inversedBy="jobs")
@@ -160,6 +167,25 @@ class Job
     public function setType(string $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     * @return Job
+     */
+    public function setTitle(string $title): Job
+    {
+        $this->title = $title;
 
         return $this;
     }

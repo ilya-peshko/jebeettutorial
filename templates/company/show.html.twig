@@ -1,34 +1,38 @@
 {% extends 'base.html.twig' %}
 
-{% block create_company %}
-    <a href="{{ path('company_create') }}" class="btn btn-default navbar-btn">Add company</a>
-{% endblock %}
-
-{% block create_job %}{% endblock %}
-
 {% block body %}
+    {% if company|length %}
 
-        {% include 'company/control_panel.html.twig' with {
-            'company': company,
-            'deleteForm': deleteForm,
-        } only %}
-    <h1>Company</h1>
-
-    <div class="media" style="margin-top: 60px;">
-        {% if company.imageName %}
-            <div class="media-left">
-                <a href="#" target="_blank">
-                    <img class="media-object" style="width:200px; height:200px;"
-                         src="{{ asset(image_directory ~ '/' ~ company.imageName) }}">
-                </a>
-            </div>
+        {% if app.user and (app.user is same as(company.user)) %}
+            {% include 'company/control_panel.html.twig' with {
+                'company': company,
+            } only %}
         {% endif %}
-        <div class="media-body">
-            <div class="row">
-                <div class="col-sm-10">
-                    <h3 class="media-heading"><strong>{{ company.name }}</strong> <i>({{ company.address }})</i></h3>
+
+        <h1>Company</h1>
+        <div class="media" style="margin-top: 60px;">
+            {% if company.imageName %}
+                <div class="media-left">
+                    <a href="#" target="_blank">
+                        <img class="media-object" style="width:200px; height:200px;"
+                             src="{{ asset(image_directory ~ '/' ~ company.imageName) }}">
+                    </a>
+                </div>
+            {% endif %}
+            <div class="media-body">
+                <div class="row">
+                    <div class="col-sm-10">
+                        <h3 class="media-heading"><strong>{{ company.name }}</strong> <i>({{ company.address }})</i></h3>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    {% else %}
+        <h4>
+            You have no company.
+            {% if app.user and app.user.role('ROLE_EMPLOYER') %}
+                <a href="{{ path('company_create') }}">Create a company.</a>
+            {% endif %}
+        </h4>
+    {% endif %}
 {% endblock %}

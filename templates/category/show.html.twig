@@ -5,15 +5,26 @@
 {% endblock %}
 
 {% block body %}
+
     {% include 'job/_job_history.html.twig' with {'historyJobs': historyJobs} only %}
 
-    <h4>{{ category.name }}</h4>
+    {% include 'category/search_form.html.twig' with {'search_form': searchForm, 'slug': category.slug } only %}
 
-    {% include 'job/table.html.twig' with {'jobs': activeJobs} only %}
+    {% if activeJobs|length %}
+        <h4>{{ category.name }}</h4>
 
-    <a href="{{ path('job_create') }}" class="btn btn-default navbar-btn pull-right">Post a Job</a>
+        {% include 'job/table.html.twig' with {'jobs': activeJobs} only %}
 
-    <div class="navigation text-center">
-        {{ knp_pagination_render(activeJobs) }}
-    </div>
+        {% if app.user and app.user.role('ROLE_EMPLOYER') %}
+            <a href="{{ path('job_create') }}" class="btn btn-default navbar-btn pull-right">Post a Job</a>
+        {% endif %}
+
+        <div class="navigation text-center">
+            {{ knp_pagination_render(activeJobs) }}
+        </div>
+    {% else %}
+    <h4>
+        Search failed.
+    </h4>
+    {% endif %}
 {% endblock %}

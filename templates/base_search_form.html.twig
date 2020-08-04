@@ -1,0 +1,9 @@
+{{ form_start(search_form,{
+    'attr': {'class': 'navbar-form navbar-center','action':path(app.request.get('_route'))}
+}) }}
+
+    {{ form_widget(search_form.search,{
+        'attr': {'class': 'form-control search-query'}
+    }) }}
+
+{{ form_end(search_form) }}

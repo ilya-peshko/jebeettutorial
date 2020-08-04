@@ -8,8 +8,6 @@ use App\Entity\JobApplication;
 use App\Entity\Resume;
 use App\Entity\User\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\Internal\CommitOrderCalculator;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -32,9 +30,9 @@ class JobApplicationRepository extends ServiceEntityRepository
     /**
      * @param Job    $job
      * @param Resume $resume
-     * @return QueryBuilder
+     * @return array
      */
-    public function checkCoincidence(Job $job, Resume $resume): QueryBuilder
+    public function checkCoincidence(Job $job, Resume $resume): array
     {
         return $this->createQueryBuilder('j')
             ->andWhere('j.job = :job')

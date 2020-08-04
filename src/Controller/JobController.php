@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Entity\Job;
+use App\Entity\Traits\FormTrait;
 use App\Entity\User\User;
 use App\Form\JobType;
 use App\Service\JobHistoryService;
@@ -22,23 +23,34 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
  */
 class JobController extends AbstractController
 {
+    use FormTrait;
+
     /**
      * Lists all job entities.
      *
-     * @Route("/", name="job_list", methods="GET")
-     *
+     * @Route("/", name="job_list", methods={"GET", "POST"})
+     * @param Request $request
      * @param EntityManagerInterface $em
      * @param JobHistoryService $jobHistoryService
      *
      * @return Response
      */
-    public function list(EntityManagerInterface $em, JobHistoryService $jobHistoryService): Response
+    public function list(EntityManagerInterface $em, JobHistoryService $jobHistoryService, Request $request): Response
     {
-        $categories = $em->getRepository(Category::class)->findWithActiveJobs();
+        $search = null;
+        $form = $this->createSearchForm();
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $search = $request->request->get('form')['Request'];
+        }
+
+        $categories = $em->getRepository(Category::class)->findWithActiveJobs($search);
 
         return $this->render('job/list.html.twig', [
             'categories'  => $categories,
             'historyJobs' => $jobHistoryService->getJobs(),
+            'searchForm' => $form->createView(),
         ]);
     }
 
@@ -56,7 +68,7 @@ class JobController extends AbstractController
     {
         $jobHistoryService->addJob($job);
 
-        $deleteForm   = $this->createDeleteForm($job);
+        $deleteForm = $this->createDeleteForm($job);
 
         return $this->render('job/show.html.twig', [
             'job'              => $job,
@@ -178,6 +190,4 @@ class JobController extends AbstractController
 
         return $this->redirectToRoute('job_list');
     }
-
-
 }
