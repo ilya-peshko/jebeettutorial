@@ -10,6 +10,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity(repositoryClass=CategoryRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  * @ORM\Table(name="categories")
  */
 class Category
@@ -146,4 +147,27 @@ class Category
         return $this;
     }
 
+    /**
+     * @ORM\PrePersist()
+     */
+    public function prePersist(): void
+    {
+        $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
+    }
+
+    /**
+     * @ORM\PreUpdate()
+     */
+    public function preUpdate(): void
+    {
+        $this->updatedAt = new \DateTime();
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString() {
+        return $this->name;
+    }
 }

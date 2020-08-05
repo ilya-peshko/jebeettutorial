@@ -35,6 +35,9 @@ class JobApplication
      */
     private $viewed;
 
+    /**
+     * JobApplication constructor.
+     */
     public function __construct()
     {
         $this->viewed = false;
@@ -49,9 +52,9 @@ class JobApplication
     }
 
     /**
-     * @return Job
+     * @return Job|null
      */
-    public function getJob(): Job
+    public function getJob(): ?Job
     {
         return $this->job;
     }
@@ -92,7 +95,7 @@ class JobApplication
      */
     public function setViewed($boolean): self
     {
-        $this->viewed = (bool) $boolean;
+        $this->viewed = (bool)$boolean;
 
         return $this;
     }
@@ -104,5 +107,4 @@ class JobApplication
     {
         return $this->viewed;
     }
-
 }

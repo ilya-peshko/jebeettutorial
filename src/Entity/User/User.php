@@ -105,7 +105,7 @@ class User implements UserInterface
     /**
      * @return string
      */
-    public function getUsername(): string
+    public function getUsername(): ?string
     {
         return $this->username;
     }
@@ -119,9 +119,9 @@ class User implements UserInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getEmail(): string
+    public function getEmail(): ?string
     {
         return $this->email;
     }
@@ -129,7 +129,7 @@ class User implements UserInterface
     /**
      * @return string|null
      */
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return $this->password;
     }
@@ -215,7 +215,7 @@ class User implements UserInterface
      * @param $email
      * @return $this
      */
-    public function setEmail($email): self
+    public function setEmail($email): ?self
     {
         $this->email = $email;
 
@@ -287,7 +287,6 @@ class User implements UserInterface
         $this->company = $company;
         return $this;
     }
-
 
     /**
      * @return string

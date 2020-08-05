@@ -12,6 +12,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 /**
  * @ORM\Entity(repositoryClass=CompanyRepository::class)
  * @ORM\Table(name="company")
+ * @ORM\HasLifecycleCallbacks()
  * @Vich\Uploadable
  */
 class Company implements \Serializable

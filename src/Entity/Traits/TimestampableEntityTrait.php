@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Trait TimestampableEntityTrait
  * @package App\Entity\Traits
+ * @ORM\HasLifecycleCallbacks()
  */
 trait TimestampableEntityTrait
 {
@@ -65,4 +66,22 @@ trait TimestampableEntityTrait
 
         return $this;
     }
+
+    /**
+     * @ORM\PrePersist()
+     */
+    public function prePersist(): void
+    {
+        $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
+    }
+
+    /**
+     * @ORM\PreUpdate()
+     */
+    public function preUpdate(): void
+    {
+        $this->updatedAt = new \DateTime();
+    }
+
 }
