@@ -2,15 +2,23 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\User\User;
 use App\Repository\ResumeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ResumeRepository::class)
  * @ORM\Table(name="resumes")
+ *
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read", "resume"}},
+ *     denormalizationContext={"groups"={"write"}},
+ * )
  */
 class Resume
 {
@@ -18,6 +26,7 @@ class Resume
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"resume"})
      */
     private $id;
 
@@ -25,6 +34,7 @@ class Resume
      * @var string
      *
      * @ORM\Column(type="string", length=50)
+     * @Groups({"resume"})
      */
     private $name;
 
@@ -32,6 +42,7 @@ class Resume
      * @var string
      *
      * @ORM\Column(type="string", length=50)
+     * @Groups({"resume"})
      */
     private $surname;
 
@@ -39,6 +50,7 @@ class Resume
      * @var string
      *
      * @ORM\Column(type="string", length=50)
+     * @Groups({"resume"})
      */
     private $cityOfResidence;
 
@@ -46,6 +58,7 @@ class Resume
      * @var string
      *
      * @ORM\Column(type="string", length=20)
+     * @Groups({"resume"})
      */
     private $gender;
 
@@ -53,6 +66,7 @@ class Resume
      * @var \DateTime
      *
      * @ORM\Column(type="datetime")
+     * @Groups({"resume"})
      */
     private $dateOfBirthday;
 
@@ -60,6 +74,7 @@ class Resume
      * @var string
      *
      * @ORM\Column(type="string", length=255)
+     * @Groups({"resume"})
      */
     private $title;
 
@@ -67,12 +82,15 @@ class Resume
      * @var string
      *
      * @ORM\Column(type="text")
+     * @Groups({"resume"})
      */
     private $aboutMe;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User\User", inversedBy="resumes")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
+     * @Assert\Type(type="App\Entity\User\User")
+     * @Groups({"resume"})
      */
     private $user;
 

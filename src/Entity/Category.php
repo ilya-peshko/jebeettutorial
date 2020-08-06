@@ -2,16 +2,26 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\TimestampableEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+
 
 /**
  * @ORM\Entity(repositoryClass=CategoryRepository::class)
  * @ORM\HasLifecycleCallbacks()
  * @ORM\Table(name="categories")
+ *
+ *  @ApiResource(
+ *     normalizationContext={"groups"={"read", "category"}},
+ *     denormalizationContext={"groups"={"write"}}
+ * )
  */
 class Category
 {
@@ -22,12 +32,17 @@ class Category
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"category", "job"})
+     *
      */
     private $id;
 
     /**
      * @var string
+     *
      * @ORM\Column(type="string", length=100)
+     * @Assert\NotBlank()
+     * @Groups({"category"})
      */
     private $name;
 
@@ -35,6 +50,7 @@ class Category
      * @var Job[]|ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="Job", mappedBy="category")
+     * @Groups({"read", "category"})
      */
     private $jobs;
 
@@ -42,8 +58,8 @@ class Category
      * @var string
      *
      * @Gedmo\Slug(fields={"name"})
-     *
      * @ORM\Column(type="string", length=128, unique=true)
+     * @Assert\NotBlank()
      */
     private $slug;
 
@@ -145,23 +161,6 @@ class Category
         $this->jobs->removeElement($job);
 
         return $this;
-    }
-
-    /**
-     * @ORM\PrePersist()
-     */
-    public function prePersist(): void
-    {
-        $this->createdAt = new \DateTime();
-        $this->updatedAt = new \DateTime();
-    }
-
-    /**
-     * @ORM\PreUpdate()
-     */
-    public function preUpdate(): void
-    {
-        $this->updatedAt = new \DateTime();
     }
 
     /**

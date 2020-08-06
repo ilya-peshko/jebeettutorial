@@ -2,13 +2,22 @@
 
 namespace App\Entity\User;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="user")
+ *
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read", "user"}},
+ *     denormalizationContext={"groups"={"write"}},
+ *     forceEager = false
+ * )
  */
 class User implements UserInterface
 {
@@ -18,24 +27,32 @@ class User implements UserInterface
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Groups({"user", "company", "resume"})
+     * @Assert\NotBlank()
      */
     private $id;
 
     /**
      * @var string
      * @ORM\Column(type="string", length=25, unique=true)
+     * @Assert\NotBlank()
+     * @Groups({"user"})
      */
     private $username;
 
     /**
      * @var string
      * @ORM\Column(type="string", length=254, unique=true)
+     * @Assert\NotBlank()
+     * @Groups({"user"})
      */
     private $email;
 
     /**
      * @var bool
      * @ORM\Column(name="enabled", type="boolean")
+     * @Assert\NotBlank()
+     * @Groups({"user"})
      */
     private $enabled;
 
@@ -44,6 +61,7 @@ class User implements UserInterface
      *
      * @var string
      * @ORM\Column(type="string")
+     * @Assert\NotBlank()
      */
     private $password;
 
@@ -56,16 +74,21 @@ class User implements UserInterface
     /**
      * @var array
      * @ORM\Column(type="json")
+     * @Assert\NotBlank()
+     * @Groups({"user"})
      */
     private $roles;
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Company", mappedBy="user")
+     * @Assert\NotBlank()
+     * @Groups({"user"})
      */
     private $company;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Resume", mappedBy="user", cascade={"persist", "remove"})
+     * @Groups({"resume"})
      */
     private $resumes;
 

@@ -2,11 +2,14 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\ImageTrait;
 use App\Entity\Traits\TimestampableEntityTrait;
 use App\Repository\CompanyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
@@ -14,6 +17,10 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @ORM\Table(name="company")
  * @ORM\HasLifecycleCallbacks()
  * @Vich\Uploadable
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read", "company_imageName", "company"}},
+ *     denormalizationContext={"groups"={"write"}}
+ * )
  */
 class Company implements \Serializable
 {
@@ -24,21 +31,25 @@ class Company implements \Serializable
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"company", "job"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=25)
+     * @Groups({"company"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=100)
+     * @Groups({"company"})
      */
     private $address;
 
     /**
      * @ORM\Column(type="string", length=20, nullable=true)
+     * @Groups({"company"})
      */
     private $phone;
 
@@ -46,12 +57,15 @@ class Company implements \Serializable
      * @var Job[]|ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="App\Entity\Job", mappedBy="company", cascade={"persist", "remove"})
+     * @Groups({"company"})
      */
     private $jobs;
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\User\User", inversedBy="company")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
+     * @Assert\Type(type="App\Entity\User\User")
+     * @Groups({"company", "user"})
      */
     private $user;
 

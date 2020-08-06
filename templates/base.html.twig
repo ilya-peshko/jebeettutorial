@@ -63,7 +63,10 @@
                 {% if app.user %}
                     <p class ="navbar-brand">{{ app.user.username }}</p>
                     <p class ="navbar-brand">{{ app.user.meta }}</p>
-                    <a href="{{ path('app_logout') }}" class="btn btn-dark navbar-btn">Log out</a>
+                    {% if app.user and app.user.role('ROLE_ADMIN') %}
+                        <a href="{{ path('admin') }}" class="btn btn-primary navbar-btn">Admin panel</a>
+                    {% endif %}
+                    <a href="{{ path('app_logout') }}" class="btn btn-info navbar-btn">Log out</a>
                 {% else %}
                     <a href="{{ path('app_login') }}" class="btn btn-info navbar-btn">Log in</a>
                 {% endif %}

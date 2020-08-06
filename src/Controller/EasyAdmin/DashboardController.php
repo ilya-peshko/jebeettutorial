@@ -61,11 +61,10 @@ class DashboardController extends AbstractDashboardController
                 ->setPermission('ROLE_ADMIN'),
             MenuItem::linkToCrud('Resumes', 'fa fa-address-book', Resume::class)
                 ->setPermission('ROLE_ADMIN'),
-            MenuItem::linkToCrud('Job applications', 'fa fa-angle-double-right', JobApplication::class)
-                ->setPermission('ROLE_ADMIN'),
 
             MenuItem::section('Options'),
             MenuItem::linkToLogout('Logout', 'fa fa-door-open'),
+            MenuItem::linktoRoute('Back to site', 'fa fa-compass', 'job_list'),
         ];
         // yield MenuItem::linkToCrud('The Label', 'icon class', EntityClass::class);
     }

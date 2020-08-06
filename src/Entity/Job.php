@@ -2,12 +2,16 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\ImageTrait;
 use App\Entity\Traits\TimestampableEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\JobRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
@@ -15,6 +19,11 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @ORM\Table(name="jobs")
  * @ORM\HasLifecycleCallbacks()
  * @Vich\Uploadable
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read", "job_imageName", "job"}},
+ *     denormalizationContext={"groups"={"write"}},
+ *     forceEager = false
+ * )
  */
 class Job
 {
@@ -37,6 +46,7 @@ class Job
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Groups({"category", "company", "job"})
      */
     private $id;
 
@@ -44,6 +54,8 @@ class Job
      * @var string
      *
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Groups({"job"})
      */
     private $type;
 
@@ -51,6 +63,8 @@ class Job
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255)
+     * @Assert\NotBlank()
+     * @Groups({"job"})
      */
     private $title;
 
@@ -59,6 +73,9 @@ class Job
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Company", inversedBy="jobs")
      * @ORM\JoinColumn(name="company_id", referencedColumnName="id", nullable=false)
+     * @Assert\Type(type="App\Entity\Company")
+     * @Assert\NotBlank()
+     * @Groups({"job"})
      */
     private $company;
 
@@ -66,6 +83,7 @@ class Job
      * @var string|null
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"job"})
      */
     private $url;
 
@@ -73,6 +91,8 @@ class Job
      * @var string
      *
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Groups({"job"})
      */
     private $position;
 
@@ -80,6 +100,8 @@ class Job
      * @var string
      *
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Groups({"job"})
      */
     private $location;
 
@@ -87,6 +109,8 @@ class Job
      * @var string
      *
      * @ORM\Column(type="text")
+     * @Assert\NotBlank()
+     * @Groups({"job"})
      */
     private $description;
 
@@ -94,6 +118,8 @@ class Job
      * @var string
      *
      * @ORM\Column(type="text")
+     * @Assert\NotBlank()
+     * @Groups({"job"})
      */
     private $howToApply;
 
@@ -101,6 +127,8 @@ class Job
      * @var bool
      *
      * @ORM\Column(type="boolean")
+     * @Assert\NotBlank()
+     * @Groups({"job"})
      */
     private $public;
 
@@ -108,6 +136,8 @@ class Job
      * @var bool
      *
      * @ORM\Column(type="boolean")
+     * @Assert\NotBlank()
+     * @Groups({"job"})
      */
     private $activated;
 
@@ -115,6 +145,8 @@ class Job
      * @var string
      *
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Groups({"job"})
      */
     private $email;
 
@@ -122,6 +154,8 @@ class Job
      * @var \DateTime
      *
      * @ORM\Column(type="datetime")
+     * @Assert\NotBlank()
+     * @Groups({"job"})
      */
     private $expiresAt;
 
@@ -130,6 +164,9 @@ class Job
      *
      * @ORM\ManyToOne(targetEntity="Category", inversedBy="jobs")
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id", nullable=false)
+     * @Assert\Type(type="App\Entity\Category")
+     * @Assert\NotBlank()
+     * @Groups({"job"})
      */
     private $category;
 
@@ -388,7 +425,6 @@ class Job
 
         return $this;
     }
-
 
     /**
      * @return Category

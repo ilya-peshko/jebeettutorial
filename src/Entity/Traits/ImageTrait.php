@@ -4,14 +4,17 @@
 namespace App\Entity\Traits;
 
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * Trait ImageTrait
  * @package App\Entity\Traits
+ * @ApiResource()
  */
 trait ImageTrait
 {
@@ -28,6 +31,8 @@ trait ImageTrait
      * @ORM\Column(type="string", nullable=true)
      *
      * @var string|null
+     *
+     * @Groups({"company_imageName", "job_imageName"})
      */
     private $imageName;
 

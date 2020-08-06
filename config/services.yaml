@@ -9,6 +9,7 @@ parameters:
     jobs_directory: '%kernel.project_dir%/public/uploads/jobs'
     jobs_web_directory: '/uploads/jobs'
     image_directory: '/uploads/image'
+    jwt_key_pass_phrase: ~
 
 services:
     # default configuration for services in *this* file
@@ -30,3 +31,9 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Swagger\SwaggerDecorator:
+        arguments:
+            $decorated: '@api_platform.swagger.normalizer.documentation'
+        autoconfigure: true
+        autowire: false
