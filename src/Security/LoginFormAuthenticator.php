@@ -132,8 +132,12 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        if(in_array('ROLE_EMPLOYER', $token->getRoleNames())){
+        if (in_array('ROLE_EMPLOYER', $token->getRoleNames())) {
             return new RedirectResponse($this->router->generate('company_show'));
+        }
+
+        if (in_array('ROLE_ADMIN', $token->getRoleNames())) {
+            return new RedirectResponse($this->router->generate('admin'));
         }
 
         return new RedirectResponse($this->router->generate('job_list'));

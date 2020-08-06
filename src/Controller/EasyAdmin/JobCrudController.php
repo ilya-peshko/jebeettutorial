@@ -63,6 +63,7 @@ class JobCrudController extends AbstractCrudController
             AssociationField::new('company', 'Company'),
             TextField::new('title'),
             TextField::new('position', 'Position'),
+            TextField::new('howToApply', 'How to apply'),
             TextareaField::new('description'),
             UrlField::new('url', 'Url'),
             CountryField::new('location', 'Location'),
