@@ -34,9 +34,15 @@
             </label>
         </div>
     #}
-
+    <br>
     <button class="btn btn-lg btn-primary" type="submit">
         Sign in
     </button>
+    <a class="btn btn-lg btn-danger" href="{{ path('app_forgot_password_request')}}">
+        Forgot password
+    </a>
+    <a class="btn btn-lg btn-info" href="{{ path('app_register')}}">
+        Registration
+    </a>
 </form>
 {% endblock %}

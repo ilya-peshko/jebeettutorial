@@ -41,7 +41,6 @@ class Category
      * @var string
      *
      * @ORM\Column(type="string", length=100)
-     * @Assert\NotBlank()
      * @Groups({"category"})
      */
     private $name;
@@ -59,7 +58,6 @@ class Category
      *
      * @Gedmo\Slug(fields={"name"})
      * @ORM\Column(type="string", length=128, unique=true)
-     * @Assert\NotBlank()
      */
     private $slug;
 

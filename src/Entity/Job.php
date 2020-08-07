@@ -54,7 +54,6 @@ class Job
      * @var string
      *
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
      * @Groups({"job"})
      */
     private $type;
@@ -63,7 +62,6 @@ class Job
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255)
-     * @Assert\NotBlank()
      * @Groups({"job"})
      */
     private $title;
@@ -74,7 +72,6 @@ class Job
      * @ORM\ManyToOne(targetEntity="App\Entity\Company", inversedBy="jobs")
      * @ORM\JoinColumn(name="company_id", referencedColumnName="id", nullable=false)
      * @Assert\Type(type="App\Entity\Company")
-     * @Assert\NotBlank()
      * @Groups({"job"})
      */
     private $company;
@@ -91,7 +88,6 @@ class Job
      * @var string
      *
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
      * @Groups({"job"})
      */
     private $position;
@@ -100,7 +96,6 @@ class Job
      * @var string
      *
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
      * @Groups({"job"})
      */
     private $location;
@@ -109,7 +104,6 @@ class Job
      * @var string
      *
      * @ORM\Column(type="text")
-     * @Assert\NotBlank()
      * @Groups({"job"})
      */
     private $description;
@@ -118,7 +112,6 @@ class Job
      * @var string
      *
      * @ORM\Column(type="text")
-     * @Assert\NotBlank()
      * @Groups({"job"})
      */
     private $howToApply;
@@ -127,7 +120,6 @@ class Job
      * @var bool
      *
      * @ORM\Column(type="boolean")
-     * @Assert\NotBlank()
      * @Groups({"job"})
      */
     private $public;
@@ -136,7 +128,6 @@ class Job
      * @var bool
      *
      * @ORM\Column(type="boolean")
-     * @Assert\NotBlank()
      * @Groups({"job"})
      */
     private $activated;
@@ -145,7 +136,6 @@ class Job
      * @var string
      *
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
      * @Groups({"job"})
      */
     private $email;
@@ -154,7 +144,6 @@ class Job
      * @var \DateTime
      *
      * @ORM\Column(type="datetime")
-     * @Assert\NotBlank()
      * @Groups({"job"})
      */
     private $expiresAt;
@@ -165,7 +154,6 @@ class Job
      * @ORM\ManyToOne(targetEntity="Category", inversedBy="jobs")
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id", nullable=false)
      * @Assert\Type(type="App\Entity\Category")
-     * @Assert\NotBlank()
      * @Groups({"job"})
      */
     private $category;

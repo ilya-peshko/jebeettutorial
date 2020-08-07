@@ -26,7 +26,7 @@
             No active jobs.
             {% if app.user and app.user.role('ROLE_EMPLOYER') and app.user.company|length %}
                 <a href="{{ path('job_create') }}">Create a job.</a>
-            {% else %}
+            {% elseif app.user and app.user.role('ROLE_EMPLOYER') %}
                 <a href="{{ path('company_create') }}">Create a company.</a>
             {% endif %}
         </h4>

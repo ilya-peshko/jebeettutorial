@@ -5,6 +5,7 @@ namespace App\Entity\User;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -18,6 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     denormalizationContext={"groups"={"write"}},
  *     forceEager = false
  * )
+ * @UniqueEntity(fields={"username"}, message="There is already an account with this username")
  */
 class User implements UserInterface
 {
@@ -28,9 +30,15 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      * @Groups({"user", "company", "resume"})
-     * @Assert\NotBlank()
      */
     private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $facebookId;
 
     /**
      * @var string
@@ -51,7 +59,7 @@ class User implements UserInterface
     /**
      * @var bool
      * @ORM\Column(name="enabled", type="boolean")
-     * @Assert\NotBlank()
+     *
      * @Groups({"user"})
      */
     private $enabled;
@@ -61,7 +69,6 @@ class User implements UserInterface
      *
      * @var string
      * @ORM\Column(type="string")
-     * @Assert\NotBlank()
      */
     private $password;
 
@@ -74,14 +81,14 @@ class User implements UserInterface
     /**
      * @var array
      * @ORM\Column(type="json")
-     * @Assert\NotBlank()
+     *
      * @Groups({"user"})
      */
     private $roles;
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Company", mappedBy="user")
-     * @Assert\NotBlank()
+     *
      * @Groups({"user"})
      */
     private $company;
@@ -93,12 +100,17 @@ class User implements UserInterface
     private $resumes;
 
     /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isVerified = false;
+
+    /**
      * User constructor.
      */
     public function __construct()
     {
         $this->enabled = false;
-        $this->roles = [];
+        $this->roles   = [];
     }
 
     /**
@@ -123,6 +135,24 @@ class User implements UserInterface
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getFacebookId(): int
+    {
+        return $this->facebookId;
+    }
+
+    /**
+     * @param int $facebookId
+     * @return User
+     */
+    public function setFacebookId(int $facebookId): User
+    {
+        $this->facebookId = $facebookId;
+        return $this;
     }
 
     /**
@@ -192,6 +222,7 @@ class User implements UserInterface
 
         return $this;
     }
+
     /**
      * @param $role
      * @return bool
@@ -251,7 +282,7 @@ class User implements UserInterface
      */
     public function setEnabled($boolean): self
     {
-        $this->enabled = (bool) $boolean;
+        $this->enabled = (bool)$boolean;
 
         return $this;
     }
@@ -327,5 +358,17 @@ class User implements UserInterface
         }
 
         return $userRole;
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): self
+    {
+        $this->isVerified = $isVerified;
+
+        return $this;
     }
 }
