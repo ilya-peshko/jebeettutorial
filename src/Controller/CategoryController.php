@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Category;
 use App\Entity\Job;
 use App\Entity\Traits\FormTrait;

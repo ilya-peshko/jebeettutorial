@@ -1,34 +1,22 @@
 {% extends 'base.html.twig' %}
 
+{% block javascripts %}
+
+    <script src = "https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src = "{{ asset('js/jobs.js') }}"></script>
+    <script type="text/javascript">
+        let jobs = new Jobs();
+        jobs.init();
+    </script>
+
+{% endblock %}
 {% block body %}
 
     {% include 'job/_job_history.html.twig' with {'historyJobs': historyJobs} only %}
 
     {% include 'base_search_form.html.twig' with {'search_form': searchForm} only %}
 
-    {% if categories|length %}
+    <div id="activejob-list"></div>
 
-        {% for category in categories %}
-            <h4>
-                <a href="{{ path('category_show', {slug: category.slug}) }}">{{ category.name }}</a>
-            </h4>
-            {% include 'job/table.html.twig' with {
-                'jobs': category.activeJobs|slice(0, max_items_on_page)
-            } only %}
-        {% endfor %}
 
-        {% if app.user and app.user.role('ROLE_EMPLOYER') %}
-            <a href="{{ path('job_create') }}" class="btn btn-default navbar-btn pull-right">Post a Job</a>
-        {% endif %}
-
-    {% else %}
-        <h4>
-            No active jobs.
-            {% if app.user and app.user.role('ROLE_EMPLOYER') and app.user.company|length %}
-                <a href="{{ path('job_create') }}">Create a job.</a>
-            {% elseif app.user and app.user.role('ROLE_EMPLOYER') %}
-                <a href="{{ path('company_create') }}">Create a company.</a>
-            {% endif %}
-        </h4>
-    {% endif %}
 {% endblock %}

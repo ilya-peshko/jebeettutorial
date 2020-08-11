@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Category;
 use App\Entity\Job;
 use App\Entity\Traits\FormTrait;
 use App\Entity\User\User;
@@ -37,20 +36,8 @@ class JobController extends AbstractController
      */
     public function list(EntityManagerInterface $em, JobHistoryService $jobHistoryService, Request $request): Response
     {
-        $search = null;
-        $form = $this->createSearchForm();
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $search = $request->request->get('form')['Request'];
-        }
-
-        $categories = $em->getRepository(Category::class)->findWithActiveJobs($search);
-
         return $this->render('job/list.html.twig', [
-            'categories'  => $categories,
             'historyJobs' => $jobHistoryService->getJobs(),
-            'searchForm' => $form->createView(),
         ]);
     }
 

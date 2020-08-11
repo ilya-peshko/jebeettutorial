@@ -29,41 +29,29 @@ class RegistrationFormType extends AbstractType
                     new NotBlank(),
                 ]
             ])
-            ->add('roles', ChoiceType::class,[
-                'choices'  => [
-                        'Employer' => 'ROLE_EMPLOYER',
-                        'Applicant'  => 'ROLE_APPLICANT',
-                    ],
-                'multiple' => true,
+            ->add('roles', ChoiceType::class, [
+                'choices'     => [
+                    'Employer'  => 'ROLE_EMPLOYER',
+                    'Applicant' => 'ROLE_APPLICANT',
+                ],
+                'multiple'    => true,
                 'constraints' => [
                     new NotBlank(),
                 ]
             ])
-//            ->add('roles', CollectionType::class, [
-//                'entry_type'   => ChoiceType::class,
-//                'entry_options'  => [
-//                    'choices'  => [
-//                        'Employer' => 'ROLE_EMPLOYER',
-//                        'Applicant'  => 'ROLE_APPLICANT',
-//                    ],
-//                ],
-//                'constraints' => [
-//                    new NotBlank(),
-//                ]
-//            ])
             ->add('plainPassword', PasswordType::class, [
                 // instead of being set onto the object directly,
                 // this is read and encoded in the controller
-                'mapped' => false,
+                'mapped'      => false,
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Please enter a password',
                     ]),
                     new Length([
-                        'min' => 3,
+                        'min'        => 3,
                         'minMessage' => 'Your password should be at least {{ limit }} characters',
                         // max length allowed by Symfony for security reasons
-                        'max' => 4096,
+                        'max'        => 4096,
                     ]),
                 ],
             ])

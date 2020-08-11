@@ -9,19 +9,27 @@ use App\Repository\CategoryRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-
+use App\Controller\API\JobController;
+use App\Controller\API\CategoryController;
 
 /**
  * @ORM\Entity(repositoryClass=CategoryRepository::class)
  * @ORM\HasLifecycleCallbacks()
  * @ORM\Table(name="categories")
  *
- *  @ApiResource(
- *     normalizationContext={"groups"={"read", "category"}},
- *     denormalizationContext={"groups"={"write"}}
- * )
+ * @ApiResource(
+ *     formats={"html"},
+ *     itemOperations={
+ *        "get"
+ *     },
+ *     collectionOperations={
+ *       "getting_activejobs"={
+ *         "method"="GET",
+ *         "path"="/categories/activejobs",
+ *         "controller"=JobController::class,
+ *         "normalization_context"={"groups"={"category"}},
+ *       },
+ *     })
  */
 class Category
 {
