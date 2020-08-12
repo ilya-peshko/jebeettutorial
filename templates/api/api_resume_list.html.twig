@@ -1,0 +1,12 @@
+{% if resumes|length %}
+    {% include 'resume/table.html.twig' with {
+        'resumes': resumes,
+    } only %}
+    <div class="navigation text-center">
+        {{ knp_pagination_render(resumes) }}
+    </div>
+{% else %}
+    <h4>
+        Need to create resume.
+    </h4>
+{% endif %}

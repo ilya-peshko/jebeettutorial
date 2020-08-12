@@ -9,6 +9,7 @@
 ###< symfony/framework-bundle ###
 .idea/*
 /public/uploads/*
+/public/images/*
 
 ###> liip/imagine-bundle ###
 /public/media/cache/

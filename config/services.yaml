@@ -5,7 +5,7 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'en'
-    max_items_on_page: 10
+    max_items_on_page: 2
     jobs_directory: '%kernel.project_dir%/public/uploads/jobs'
     jobs_web_directory: '/uploads/jobs'
     image_directory: '/uploads/image'

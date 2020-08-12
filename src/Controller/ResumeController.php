@@ -9,7 +9,6 @@ use App\Entity\Traits\FormTrait;
 use App\Entity\User\User;
 use App\Form\ResumeType;
 use Doctrine\ORM\EntityManagerInterface;
-use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,21 +24,15 @@ class ResumeController extends AbstractController
 
     /**
      * @Route(
-     *     "/resume/list/{page}",
+     *     "/resume/list/",
      *     name="resume_list",
-     *     methods={"GET", "POST"},
-     *     defaults={"page": 1},
-     *     requirements={"page" = "\d+"}
+     *     methods={"GET"},
      * )
-     * @param int $page
-     * @param PaginatorInterface $paginator
-     * @param Request $request
-     *
      * @IsGranted("ROLE_APPLICANT")
      *
      * @return Response
      */
-    public function list(PaginatorInterface $paginator, int $page, Request $request): Response
+    public function list(): Response
     {
         $this->denyAccessUnlessGranted(
             'ROLE_APPLICANT',
@@ -47,26 +40,7 @@ class ResumeController extends AbstractController
             'User tried to access a page'
         );
 
-        $search = null;
-        $form = $this->createSearchForm();
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $search = $request->request->get('form')['Request'];
-        }
-
-        /** @var User $user */
-        $user = $this->getUser();
-        $resumes = $paginator->paginate(
-            $this->getDoctrine()->getRepository(Resume::class)->getAllResumesByUser($user, $search),
-            $page,
-            $this->getParameter('max_items_on_page')
-        );
-
-        return $this->render('resume/list.html.twig', [
-            'resumes'  => $resumes,
-            'searchForm' => $form->createView(),
-        ]);
+        return $this->render('resume/list.html.twig');
     }
 
     /**
@@ -111,7 +85,7 @@ class ResumeController extends AbstractController
     /**
      * @Route("resume/{id}", name="resume_show", methods="GET", requirements={"id" = "\d+"})
      *
-     * @Entity("resume", expr="repository.findResumeById(id)")
+     * @Entity("resume", expr="repository.find(id)")
      *
      * @param Resume $resume
      * @param Request $request
@@ -241,7 +215,7 @@ class ResumeController extends AbstractController
     /**
      * @Route("/{job_id}/{resume_id}/confirm", name="resume_confirm")
      * @Entity("job", expr="repository.findActiveJob(job_id)")
-     * @Entity("resume", expr="repository.findResumeById(resume_id)")
+     * @Entity("resume", expr="repository.find(resume_id)")
      * @param EntityManagerInterface $em
      * @param Job $job
      * @param Resume $resume

@@ -1,23 +1,23 @@
 {% extends 'base.html.twig' %}
 
+{% block javascripts %}
+    <script src = "https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src = "{{ asset('js/resumes.js') }}"></script>
+    <script type="text/javascript">
+        let resumes = new Resumes({{ app.user.id }});
+        resumes.init();
+    </script>
+{% endblock %}
+
 {% block body %}
+    <input type="search" id="resume-search" name="search"
+           aria-label="Search through resumes">
+    <input type="submit" value="Search" id="search">
 
-    {% include 'base_search_form.html.twig' with {'search_form': searchForm} only %}
-
-    {% if resumes|length %}
-        {% include 'resume/table.html.twig' with {
-            'resumes': resumes,
-        } only %}
-    {% else %}
-        <h4>
-            Need to create resume.
-        </h4>
-    {% endif %}
-
-    <a href="{{ path('resume_create') }}" class="btn btn-default pull-right">Add resume</a>
-
-    <div class="navigation text-center">
-        {{ knp_pagination_render(resumes) }}
+    <div class="resume-wrapper">
+        <img src="{{ asset('images/ajax-loader.gif') }}" class="loader mx-auto">
+        <div id="resumes"></div>
     </div>
 
+    <a href="{{ path('resume_create') }}" class="btn btn-default pull-right">Add resume</a>
 {% endblock %}

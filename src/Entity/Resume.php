@@ -10,15 +10,27 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Controller\Api\ResumeController;
 
 /**
  * @ORM\Entity(repositoryClass=ResumeRepository::class)
  * @ORM\Table(name="resumes")
- *
+
  * @ApiResource(
- *     normalizationContext={"groups"={"read", "resume"}},
- *     denormalizationContext={"groups"={"write"}},
- * )
+ *     formats={"html"},
+ *     itemOperations={
+ *        "get"
+ *     },
+ *     collectionOperations={
+ *       "getting_activejobs"={
+ *         "method"="GET",
+ *         "path"="/user/{id}/resume/list/",
+ *         "requirements"={"id"="\d+"},
+ *         "controller"=ResumeController::class,
+ *         "normalization_context"={"groups"={"read", "resume"}},
+ *         "denormalizationContext"={"groups"={"write"}}
+ *       }
+ *     })
  */
 class Resume
 {
