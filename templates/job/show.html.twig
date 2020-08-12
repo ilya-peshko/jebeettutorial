@@ -2,7 +2,7 @@
 
 {% block body %}
 
-    {% if app.user and (app.user is same as(job.company.user)) %}
+    {% if app.user %}
         {% include 'job/control_panel.html.twig' with {
             'job': job,
             'deleteForm': deleteForm,

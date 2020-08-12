@@ -16,4 +16,8 @@
 
     <div id="activejob-list"></div>
 
+    {% if app.user and app.user.role('ROLE_EMPLOYER') and app.user.company %}
+        <a href="{{ path('job_create') }}" class="btn btn-default navbar-btn pull-right">Post a Job</a>
+    {% endif %}
+
 {% endblock %}

@@ -8,14 +8,19 @@ use App\Entity\Resume;
 use App\Entity\Traits\FormTrait;
 use App\Entity\User\User;
 use App\Form\ResumeType;
+use App\Service\RabbitMQ\SendEmailConsumer;
 use Doctrine\ORM\EntityManagerInterface;
+use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ResumeController extends AbstractController
@@ -219,11 +224,12 @@ class ResumeController extends AbstractController
      * @param EntityManagerInterface $em
      * @param Job $job
      * @param Resume $resume
+     * @param ProducerInterface $producer
      * @IsGranted("ROLE_APPLICANT")
      *
      * @return Response
      */
-    public function confirm(EntityManagerInterface $em, Job $job, Resume $resume): Response
+    public function confirm(ProducerInterface $producer, EntityManagerInterface $em, Job $job, Resume $resume): Response
     {
         $this->denyAccessUnlessGranted(
             'ROLE_APPLICANT',
@@ -246,6 +252,16 @@ class ResumeController extends AbstractController
 
         $em->persist($jobApplication);
         $em->flush();
+
+        $producer->publish(json_encode([
+            'resume'       => $resume->getId(),
+            'job'          => $job->getId(),
+            'address'      => 'alkatras4321@gmail.com',
+            'name'         => 'Jobeet',
+            'to'           => $jobApplication->getJob()->getEmail(),
+            'htmlTemplate' => 'resume/resume_email.html.twig',
+            'subject'      => 'Job response'
+        ]));
 
         return $this->redirectToRoute('job_list');
     }

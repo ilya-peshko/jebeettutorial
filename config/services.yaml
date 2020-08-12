@@ -37,3 +37,8 @@ services:
             $decorated: '@api_platform.swagger.normalizer.documentation'
         autoconfigure: true
         autowire: false
+
+    send_email_consumer:
+        class: App\Service\RabbitMQ\SendEmailConsumer
+
+    OldSound\RabbitMqBundle\RabbitMq\ProducerInterface: '@old_sound_rabbit_mq.send_email_producer'

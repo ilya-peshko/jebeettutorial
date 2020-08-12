@@ -9,10 +9,6 @@
         } only %}
     {% endfor %}
 
-    {% if app.user and app.user.role('ROLE_EMPLOYER') %}
-        <a href="{{ path('job_create') }}" class="btn btn-default navbar-btn pull-right">Post a Job</a>
-    {% endif %}
-
 {% else %}
     <h4>
         No active jobs.
