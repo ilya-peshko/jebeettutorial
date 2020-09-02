@@ -1,14 +1,10 @@
 {% extends 'base.html.twig' %}
-
 {% block body %}
+    {% block stylesheets %}
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    {% endblock %}
     {% if company|length %}
-
-        {% if app.user and (app.user is same as(company.user)) %}
-            {% include 'company/control_panel.html.twig' with {
-                'company': company,
-            } only %}
-        {% endif %}
-
         <h1>Company</h1>
         <div class="media" style="margin-top: 60px;">
             {% if company.imageName %}
@@ -27,6 +23,11 @@
                 </div>
             </div>
         </div>
+        {% if app.user and (app.user is same as(company.user)) %}
+            {% include 'company/control_panel.html.twig' with {
+                'company': company,
+            } only %}
+        {% endif %}
     {% else %}
         <h4>
             You have no company.

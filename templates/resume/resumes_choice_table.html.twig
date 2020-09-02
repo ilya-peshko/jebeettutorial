@@ -11,7 +11,7 @@
         <tr>
             <td>{{ resume.title }}</td>
             <td>
-                <a class="glyphicon glyphicon-ok" href="{{ path('resume_confirm', {job_id: job_id, resume_id:resume.id}) }}"></a>
+                <a class="fa fa-check" href="{{ path('resume_confirm', {job_id: job_id, resume_id:resume.id}) }}"></a>
             </td>
         </tr>
     {% endfor %}

@@ -4,37 +4,62 @@ namespace App\Security;
 
 use App\Entity\User\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use KnpU\OAuth2ClientBundle\Client\OAuth2ClientInterface;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\SocialAuthenticator;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use League\OAuth2\Client\Provider\FacebookUser;
 use League\OAuth2\Client\Token\AccessToken;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
+use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelper;
+use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 
 class FacebookAuthenticator extends SocialAuthenticator
 {
     private $clientRegistry;
     private $em;
     private $router;
+    private $resetPasswordHelper;
+    private $mailer;
+    private $passwordEncoder;
 
     /**
      * FacebookAuthenticator constructor.
      * @param ClientRegistry $clientRegistry
      * @param EntityManagerInterface $em
      * @param RouterInterface $router
+     * @param ResetPasswordHelperInterface $resetPasswordHelper
+     * @param MailerInterface $mailer
+     * @param  $passwordEncoder
      */
-    public function __construct(ClientRegistry $clientRegistry, EntityManagerInterface $em, RouterInterface $router)
+    public function __construct(
+        UserPasswordEncoderInterface $passwordEncoder,
+        MailerInterface $mailer,
+        ResetPasswordHelperInterface $resetPasswordHelper,
+        ClientRegistry $clientRegistry,
+        EntityManagerInterface $em,
+        RouterInterface $router
+    )
     {
-        $this->clientRegistry = $clientRegistry;
-        $this->em             = $em;
-        $this->router         = $router;
+        $this->clientRegistry      = $clientRegistry;
+        $this->em                  = $em;
+        $this->router              = $router;
+        $this->resetPasswordHelper = $resetPasswordHelper;
+        $this->mailer              = $mailer;
+        $this->passwordEncoder     = $passwordEncoder;
     }
 
     /**
@@ -66,6 +91,10 @@ class FacebookAuthenticator extends SocialAuthenticator
     /**
      * @param mixed $credentials
      * @param UserProviderInterface $userProvider
+     * @throws TransportExceptionInterface*@throws \Exception
+     * @throws ResetPasswordExceptionInterface
+     * @throws Exception
+     *
      * @return User|object|UserInterface|null
      */
     public function getUser($credentials, UserProviderInterface $userProvider)
@@ -76,20 +105,46 @@ class FacebookAuthenticator extends SocialAuthenticator
 
         $email = $facebookUser->getEmail();
 
-        // 1) have they logged in with Facebook before? Easy!
         $existingUser = $this->em->getRepository(User::class)
             ->findOneBy(['facebookId' => $facebookUser->getId()]);
         if ($existingUser) {
             return $existingUser;
         }
 
-        // 2) do we have a matching user by email?
         /** @var User $user */
         $user = $this->em->getRepository(User::class)
             ->findOneBy(['email' => $email]);
 
-        // 3) Maybe you just want to "register" them by creating
-        // a User object
+        if ($user === null) {
+            $user = new User();
+            $password = $this->generateRandomPassword(8);
+            $user->setEmail($email)
+                ->setUsername($email)
+                ->setFacebookId($facebookUser->getId())
+                ->setEnabled(true)
+                ->setIsVerified(true)
+                ->setPassword($this->passwordEncoder->encodePassword($user, $password));
+
+            $this->em->persist($user);
+            $this->em->flush();
+
+            $resetToken = $this->resetPasswordHelper->generateResetToken($user);
+
+            $email_password = (new TemplatedEmail())
+                ->from(new Address('alkatras4321@gmail.com', 'Jobeet'))
+                ->to($user->getEmail())
+                ->subject('Your password reset request')
+                ->htmlTemplate('reset_password/facebook_password_email.html.twig')
+                ->context([
+                    'password'      => $password,
+                    'resetToken'    => $resetToken,
+                    'tokenLifetime' => $this->resetPasswordHelper->getTokenLifetime(),
+                ]);
+            $this->mailer->send($email_password);
+
+            return $user;
+        }
+
         $user->setFacebookId($facebookUser->getId());
         $this->em->persist($user);
         $this->em->flush();
@@ -149,5 +204,22 @@ class FacebookAuthenticator extends SocialAuthenticator
             '/connect/', // might be the site, where users choose their oauth provider
             Response::HTTP_TEMPORARY_REDIRECT
         );
+    }
+
+    /**
+     * @param $length
+     * @return string
+     * @throws Exception
+     */
+    public function generateRandomPassword($length): string
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[random_int(0, $charactersLength - 1)];
+        }
+
+        return $randomString;
     }
 }

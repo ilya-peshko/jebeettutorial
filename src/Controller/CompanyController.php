@@ -37,7 +37,7 @@ class CompanyController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
+            $company->setUser($this->getUser());
             $em->persist($company);
             $em->flush();
 
@@ -114,13 +114,12 @@ class CompanyController extends AbstractController
     /**
      * @Route("company/edit/delete/{id}", name="company_delete", methods="GET")
      * @Entity("company", expr="repository.find(id)")
-     * @param Request $request
      * @param Company $company
      * @param EntityManagerInterface $em
      *
      * @return Response
      */
-    public function delete(Request $request, Company $company, EntityManagerInterface $em): Response
+    public function delete(Company $company, EntityManagerInterface $em): Response
     {
         if ($this->getUser() !== $company->getUser()) {
             throw new Exception('You not have permissions');

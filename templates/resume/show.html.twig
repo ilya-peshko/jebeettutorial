@@ -2,6 +2,11 @@
 
 {% block body %}
 
+    {% block stylesheets %}
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    {% endblock %}
+
     {% if app.user and (app.user is same as(resume.user)) %}
         {% include 'resume/control_panel.html.twig' with {
             'resume': resume,
@@ -14,10 +19,6 @@
             <div class="col-sm-10">
                 <h3 class="media-heading"><strong>{{ resume.title }}</strong></h3>
             </div>
-
-            <div class="col-sm-2">
-                <i class="pull-right"> Date of birthday {{ resume.dateOfBirthday|date('m/d/Y') }}</i>
-            </div>
         </div>
 
         <p>
@@ -29,11 +30,13 @@
         <p>{{ resume.aboutMe|nl2br }}</p>
 
         <p>{{ resume.cityOfResidence }}</p>
-
+        <div class="col-sm-2">
+            <i class="float-right"> Date of birthday {{ resume.dateOfBirthday|date('m/d/Y') }}</i>
+        </div>
         <div class="row">
             <div class="col-sm-12 text-right">
                 <a class="btn btn-default" href="{{ path('resume_list') }}">
-                    <span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>
+                    <span class="fa fa-arrow-left" aria-hidden="true"></span>
                     Back to list
                 </a>
             </div>

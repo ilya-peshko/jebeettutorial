@@ -31,13 +31,6 @@ class CompanyType extends AbstractType
                 ]
             ])
             ->add('phone', TelType::class)
-            ->add('user', EntityType::class, [
-                'class'        => User::class,
-                'choice_label' => 'username',
-                'constraints'  => [
-                    new NotBlank(),
-                ]
-            ])
             ->add('imageFile', VichImageType::class, [
                 'required'        => false,
                 'allow_delete'    => true,

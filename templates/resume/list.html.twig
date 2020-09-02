@@ -3,21 +3,25 @@
 {% block javascripts %}
     <script src = "https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src = "{{ asset('js/resumes.js') }}"></script>
-    <script type="text/javascript">
+    <script type = "text/javascript">
         let resumes = new Resumes({{ app.user.id }});
         resumes.init();
     </script>
 {% endblock %}
 
+{% block stylesheets %}
+    <link type = "stylesheet" rel = "{{ asset('css/search_form.css') }}">
+{% endblock %}
 {% block body %}
-    <input type="search" id="resume-search" name="search"
-           aria-label="Search through resumes">
-    <input type="submit" value="Search" id="search">
-
-    <div class="resume-wrapper">
+    <div class="mb-3 mt-3">
+        <input type="search" id="resume-search" name="search"
+               aria-label="Search through resumes">
+        <input type="submit" value="Search" id="search">
+    </div>
+    <div class="resume-wrapper mb-5">
         <img src="{{ asset('images/ajax-loader.gif') }}" class="loader mx-auto">
         <div id="resumes"></div>
     </div>
 
-    <a href="{{ path('resume_create') }}" class="btn btn-default pull-right">Add resume</a>
+    <a href="{{ path('resume_create') }}" class="btn btn-default float-right">Add resume</a>
 {% endblock %}

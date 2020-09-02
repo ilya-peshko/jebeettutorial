@@ -1,0 +1,55 @@
+version: '3'
+services:
+  apache:
+    build: .docker/apache
+    container_name: jobeettutorial_apache
+    ports:
+      - 80:80
+    volumes:
+      - .docker/config/vhosts:/etc/apache2/sites-enabled
+      - .:/home/wwwroot/jobeettutorial
+    depends_on:
+      - php
+
+  mysql:
+    image: mysql:8
+    container_name: jobeettutorial_mysql
+    volumes:
+      - .docker/data/db:/var/lib/mysql
+      - ./mysql-dump:/docker-entrypoint-initdb.d
+    command:
+      - "--default-authentication-plugin=mysql_native_password"
+      - "--lower_case_table_names=1"
+    environment:
+      MYSQL_DATABASE: jobeettutorial
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+
+  php:
+    build: .docker/php
+    container_name: jobeettutorial_php
+    volumes:
+      - .:/home/wwwroot/jobeettutorial
+    environment:
+      - maildev_host=jobeettutorial_maildev
+    depends_on:
+      - maildev
+      - mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: jobeettutorial_phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    ports:
+      - 8080:80
+    links:
+      - mysql
+
+  maildev:
+    image: djfarrelly/maildev
+    container_name: jobeettutorial_maildev
+    ports:
+      - 8001:80

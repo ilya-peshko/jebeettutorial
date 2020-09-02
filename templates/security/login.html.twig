@@ -1,59 +1,41 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Log in!{% endblock %}
+
 {% block stylesheets %}
+
     <link rel="stylesheet" href="{{ asset('css/login_form.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
+
 {% endblock %}
+
 {% block body %}
-<div class="container-two">
-    <form method="post">
-        <div class="row">
-            {% if error %}
-                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-            {% endif %}
+    {% if error %}
+        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
 
-            {% if app.user %}
-                <div class="mb-3">
-                    You are logged in as {{ app.user.username }}, <a href="{{ path('app_logout') }}">Logout</a>
-                </div>
-            {% endif %}
-
-            <h2 style="text-align:center">Login with Social Media or Manually</h2>
-            <div class="vl">
-                <span class="vl-innertext">or</span>
-            </div>
-            <div class="col">
-                <a href="{{ path('connect_facebook_start') }}" class="fb btn">
-                    <i class="fa fa-facebook fa-fw"></i> Login with Facebook
-                </a>
-                <a href="#" class="twitter btn">
-                    <i class="fa fa-twitter fa-fw"></i> Login with Twitter
-                </a>
-                <a href="#" class="google btn">
-                    <i class="fa fa-google fa-fw"></i> Login with Google+
-                </a>
-            </div>
-            <div class="col">
-                <div class="hide-md-lg">
-                    <p>Or sign in manually:</p>
-                </div>
-                <label for="inputUsername">Username</label>
-                <input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control" required autofocus>
-                <label for="inputPassword">Password</label>
-                <input type="password" name="password" id="inputPassword" class="form-control" required>
-                <input type="hidden" name="_csrf_token"
-                       value="{{ csrf_token('authenticate') }}"
-                >
-                <input type="submit" value="Login">
-            </div>
+    {% if app.user %}
+        <div class="mb-3">
+            You are logged in as {{ app.user.username }}, <a href="{{ path('app_logout') }}">Log out</a>
         </div>
-    </form>
-</div>
-    <div class="bottom-container">
+    {% endif %}
+    <div class="container">
         <div class="row">
-            <div class="col-right">
-                <a href="{{ path('app_forgot_password_request')}}" style="color:white" class="btn">Forgot password?</a>
+            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                <div class="card card-signin my-5">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Sign In | <a href="{{ path('app_register') }}" style="text-decoration: none"> Sing Up</a></h5>
+                        <form class="form-signin" method="post">
+                            <div class="form-label-group"><input placeholder="Username" type="text" name="username" id="inputUsername" class="form-control" required autofocus></div>
+                            <div class="form-label-group"><input placeholder="Password" type="password" name="password" id="inputPassword" class="form-control" required></div>
+                            <div class="mb-3"><a class="btn" href="{{ path('app_forgot_password_request') }}">Forgot password?</a></div>
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                            <input type="submit" value="Login" class="btn btn-lg btn-primary btn-block text-uppercase">
+                            <hr class="my-4"><a class="btn btn-lg btn-facebook btn-block text-uppercase" href="{{ path('connect_facebook_start') }}"><i class="fab fa-facebook-f mr-2"></i>Sign in with Facebook</a>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
