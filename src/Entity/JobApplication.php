@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\JobApplicationRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=JobApplicationRepository::class)
@@ -14,24 +15,29 @@ class JobApplication
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"job_application"})
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity=Job::class, inversedBy="jobApplications")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"job_application"})
      */
     private $job;
 
     /**
      * @ORM\ManyToOne(targetEntity=Resume::class, inversedBy="jobApplications")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"job_application"})
+     * @Groups({"job_application"})
      */
     private $resume;
 
     /**
      * @var bool
      * @ORM\Column(name="viewed", type="boolean")
+     * @Groups({"job_application"})
      */
     private $viewed;
 

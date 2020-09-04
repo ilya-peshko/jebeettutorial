@@ -24,50 +24,21 @@ class CategoryController extends AbstractController
      * Finds and displays a category entity.
      *
      * @Route(
-     *     "/category/{slug}/{page}",
+     *     "/category/{slug}/",
      *     name="category_show",
-     *     methods={"GET", "POST"},
-     *     defaults={"page": 1},
-     *     requirements={"page" = "\d+"}
+     *     methods={"GET"},
      * )
      *
      * @param Category $category
-     * @param int $page
-     * @param PaginatorInterface $paginator
      * @param JobHistoryService $jobHistoryService
-     * @param Request $request
      *
      * @return Response
      */
-    public function show(
-        Category $category,
-        int $page,
-        PaginatorInterface $paginator,
-        JobHistoryService $jobHistoryService,
-        Request $request
-    ) : Response {
-
-        $search = null;
-        $form = $this->createSearchForm();
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $search = $request->request->get('form')['Request'];
-        }
-
-        $activeJobs = $paginator->paginate(
-            $this->getDoctrine()
-                ->getRepository(Job::class)
-                ->getActiveJobsByCategoryQuery($category, $search),
-            $page,
-            $this->getParameter('max_items_on_page')
-        );
-
+    public function show(Category $category, JobHistoryService $jobHistoryService): Response
+    {
         return $this->render('category/show.html.twig', [
             'category'    => $category,
-            'activeJobs'  => $activeJobs,
             'historyJobs' => $jobHistoryService->getJobs(),
-            'searchForm'  => $form->createView()
         ]);
     }
 }

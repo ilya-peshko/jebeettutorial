@@ -13,7 +13,7 @@
 {% block body %}
 
     {% include 'job/_job_history.html.twig' with {'historyJobs': historyJobs} only %}
-
+    <img src="{{ asset('images/ajax-loader.gif') }}" class="loader mx-auto" alt="">
     <div id="activejob-list"></div>
 
     {% if app.user and app.user.role('ROLE_EMPLOYER') and app.user.company %}

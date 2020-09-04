@@ -2,11 +2,9 @@
 
 namespace App\Controller\API;
 
-use App\Entity\Resume;
-use App\Entity\User\User;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Category;
+use App\Entity\Job;
 use Knp\Component\Pager\PaginatorInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,26 +13,26 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use Swagger\Annotations as SWG;
 
-/**
- * Class ResumeController
- * @package App\Controller\API
- */
-class ResumeController extends AbstractController
+class CategoryController extends AbstractController
 {
     /**
-     * List all resumes by user
+     * Finds and displays a category entity.
      *
-     * @Route("/api/user/{id}/resume/list/", name="nelmio_api_resume", methods={"GET"})
+     * @Route(
+     *     "api/category/{slug}",
+     *     name="nelmio_api_category",
+     *     methods={"GET"},
+     * )
      * @SWG\Get(
-     *     description="Returns resumes by user",
-     *     produces={"text/html", "application/json"},
+     *     description="Return jobs by category",
+     *     produces={"text/html"},
      *     consumes={"text/html"}
      * )
      * @SWG\Response(
      *     response=200,
-     *     description="Returns the resumes of an user",
+     *     description="Returns jobs by category",
      *     @SWG\Schema(
-     *         @SWG\Items(ref=@Model(type=Resume::class, groups={"resume"}))
+     *         @SWG\Items(ref=@Model(type=Job::class, groups={"api_category_job"}))
      *     )
      * )
      * @SWG\Parameter(
@@ -43,31 +41,32 @@ class ResumeController extends AbstractController
      *     type="integer",
      *     description="Page"
      * )
-     * @SWG\Tag(name="Resumes")
+     * @SWG\Tag(name="Category")
      * @Security(name="Bearer")
      *
-     * @param Request $request
+     * @param Category $category
      * @param PaginatorInterface $paginator
-     * @param User $user
-     * @ParamConverter("user", class="App:User\User")
+     * @param Request $request
      *
      * @return Response
      */
     public function list(
+        Category $category,
         PaginatorInterface $paginator,
-        User $user,
         Request $request
-    ): Response {
-        $resumes = $paginator->paginate(
+    ) : Response {
+
+        $activeJobs = $paginator->paginate(
             $this->getDoctrine()
-                ->getRepository(Resume::class)
-                ->getAllResumesByUser($user, $request->get('query')),
+                ->getRepository(Job::class)
+                ->getActiveJobsByCategoryQuery($category, $request->get('query')),
             $request->get('page'),
             $this->getParameter('max_items_on_page')
         );
 
-        return $this->render('api/api_resume_list.html.twig', [
-            'resumes'  => $resumes,
+        return $this->render('api/api_category_jobs.html.twig', [
+            'category'    => $category,
+            'activeJobs'  => $activeJobs,
         ]);
     }
 }

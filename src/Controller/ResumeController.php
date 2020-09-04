@@ -112,7 +112,7 @@ class ResumeController extends AbstractController
                 ->getRepository(JobApplication::class)
                 ->find($request->query->get('id'));
 
-            if ($jobApplication && ($jobApplication->getJob()->getCompany()->getUser() === $user)){
+            if ($jobApplication && ($jobApplication->getJob()->getCompany()->getUser() === $user)) {
                 $jobApplication->setViewed(true);
 
                 $em->persist($jobApplication);

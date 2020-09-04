@@ -1,5 +1,10 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/search_form.css') }}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+{% endblock %}
+
 {% block javascripts %}
     <script src = "https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src = "{{ asset('js/resumes.js') }}"></script>
@@ -9,17 +14,14 @@
     </script>
 {% endblock %}
 
-{% block stylesheets %}
-    <link type = "stylesheet" rel = "{{ asset('css/search_form.css') }}">
-{% endblock %}
 {% block body %}
-    <div class="mb-3 mt-3">
-        <input type="search" id="resume-search" name="search"
-               aria-label="Search through resumes">
-        <input type="submit" value="Search" id="search">
+    <div class="width-300 mt-2">
+        <input id="resume-search" class="form-control form-control-sm w-75 float-left" type="search" placeholder="Search"
+               aria-label="Search">
+        <button id="search" type="submit" class="btn p-1" ><i class="fa fa-search" aria-hidden="true"></i></button>
     </div>
     <div class="resume-wrapper mb-5">
-        <img src="{{ asset('images/ajax-loader.gif') }}" class="loader mx-auto">
+        <img src="{{ asset('images/ajax-loader.gif') }}" class="loader mx-auto" alt="">
         <div id="resumes"></div>
     </div>
 

@@ -46,34 +46,23 @@ class JobApplicationController extends AbstractController
 
     /**
      * @Route(
-     *     "/job-application/responses/{page}",
+     *     "/job-application/responses/",
      *     name="job_application_responses",
      *     methods="GET",
-     *     defaults={"page": 1},
-     *     requirements={"page" = "\d+"}
      * )
-     * @param int $page
-     * @param PaginatorInterface $paginator
      *
      * @IsGranted("ROLE_EMPLOYER")
      *
      * @return Response
      */
-    public function responses(int $page, PaginatorInterface $paginator): Response
+    public function responses(): Response
     {
-        /** @var User $user */
-        $user = $this->getUser();
-
-        $jobApplications = $paginator->paginate(
-            $this->getDoctrine()
-                ->getRepository(JobApplication::class)
-                ->getJobApplicationsByCompany($user->getCompany()),
-            $page,
-            $this->getParameter('max_items_on_page')
+        $this->denyAccessUnlessGranted(
+            'ROLE_EMPLOYER',
+            null,
+            'User tried to access a page'
         );
 
-        return $this->render('job_application/responses.html.twig', [
-            'jobApplications' => $jobApplications,
-        ]);
+        return $this->render('job_application/responses.html.twig');
     }
 }

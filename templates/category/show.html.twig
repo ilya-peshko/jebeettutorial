@@ -4,27 +4,29 @@
     Jobs in the {{ category.name }} category
 {% endblock %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/search_form.css') }}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+{% endblock %}
+
+{% block javascripts %}
+    <script src = "https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src = "{{ asset('js/category.js') }}"></script>
+    <script type="text/javascript">
+        let category = new Category('{{ category.slug }}');
+        category.init();
+    </script>
+{% endblock %}
+
 {% block body %}
 
     {% include 'job/_job_history.html.twig' with {'historyJobs': historyJobs} only %}
+    <div class="width-300 mt-2">
+        <input id="search-input" class="form-control form-control-sm w-75 float-left" type="text" placeholder="Search"
+               aria-label="Search">
+        <button type="submit" class="btn p-1" id="search"><i class="fa fa-search" aria-hidden="true"></i></button>
+    </div>
+    <div id="active-jobs-by-category" class=""></div>
+    <img src="{{ asset('images/ajax-loader.gif') }}" class="loader mx-auto" alt="">
 
-    {% include 'category/search_form.html.twig' with {'search_form': searchForm, 'slug': category.slug } only %}
-
-    {% if activeJobs|length %}
-        <h4>{{ category.name }}</h4>
-
-        {% include 'job/table.html.twig' with {'jobs': activeJobs} only %}
-
-        {% if app.user and app.user.role('ROLE_EMPLOYER') %}
-            <a href="{{ path('job_create') }}" class="btn btn-default navbar-btn float-right">Post a Job</a>
-        {% endif %}
-
-        <div class="navigation text-center">
-            {{ knp_pagination_render(activeJobs) }}
-        </div>
-    {% else %}
-    <h4>
-        Search failed.
-    </h4>
-    {% endif %}
 {% endblock %}

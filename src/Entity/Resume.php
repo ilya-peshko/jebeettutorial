@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\User\User;
 use App\Repository\ResumeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -10,27 +9,11 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Controller\Api\ResumeController;
+use Swagger\Annotations as SWG;
 
 /**
  * @ORM\Entity(repositoryClass=ResumeRepository::class)
  * @ORM\Table(name="resumes")
-
- * @ApiResource(
- *     formats={"html"},
- *     itemOperations={
- *        "get"
- *     },
- *     collectionOperations={
- *       "getting_activejobs"={
- *         "method"="GET",
- *         "path"="/user/{id}/resume/list/",
- *         "requirements"={"id"="\d+"},
- *         "controller"=ResumeController::class,
- *         "normalization_context"={"groups"={"read", "resume"}},
- *         "denormalizationContext"={"groups"={"write"}}
- *       }
- *     })
  */
 class Resume
 {
@@ -38,6 +21,7 @@ class Resume
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @SWG\Property(description="The unique identifier of the user.")
      * @Groups({"resume"})
      */
     private $id;

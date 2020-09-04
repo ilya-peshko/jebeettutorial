@@ -1,0 +1,17 @@
+{% if activeJobs|length %}
+    <h4>{{ category.name }}</h4>
+
+    {% include 'job/table.html.twig' with {'jobs': activeJobs} only %}
+
+    {% if app.user and app.user.role('ROLE_EMPLOYER') %}
+        <a href="{{ path('job_create') }}" class="btn btn-primary navbar-btn float-right">Post a Job</a>
+    {% endif %}
+
+    <div class="navigation text-center">
+        {{ knp_pagination_render(activeJobs) }}
+    </div>
+{% else %}
+    <h4>
+        No active jobs.
+    </h4>
+{% endif %}

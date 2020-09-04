@@ -2,9 +2,8 @@
 
 namespace App\Controller\API;
 
-use App\Entity\Resume;
 use App\Entity\User\User;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\JobApplication;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,25 +15,27 @@ use Nelmio\ApiDocBundle\Annotation\Security;
 use Swagger\Annotations as SWG;
 
 /**
- * Class ResumeController
+ * Class JobApplicationController
  * @package App\Controller\API
  */
-class ResumeController extends AbstractController
+class JobApplicationController extends AbstractController
 {
     /**
-     * List all resumes by user
-     *
-     * @Route("/api/user/{id}/resume/list/", name="nelmio_api_resume", methods={"GET"})
+     * @Route(
+     *     "/api/user/{id}/job-application/responses",
+     *     name="nelmio_api_job_application_responses",
+     *     methods="GET"
+     * )
      * @SWG\Get(
-     *     description="Returns resumes by user",
-     *     produces={"text/html", "application/json"},
+     *     description="Returns responses for the company",
+     *     produces={"text/html"},
      *     consumes={"text/html"}
      * )
      * @SWG\Response(
      *     response=200,
-     *     description="Returns the resumes of an user",
+     *     description="Returns responses for the company",
      *     @SWG\Schema(
-     *         @SWG\Items(ref=@Model(type=Resume::class, groups={"resume"}))
+     *         @SWG\Items(ref=@Model(type=JobApplication::class, groups={"job_application"}))
      *     )
      * )
      * @SWG\Parameter(
@@ -43,7 +44,7 @@ class ResumeController extends AbstractController
      *     type="integer",
      *     description="Page"
      * )
-     * @SWG\Tag(name="Resumes")
+     * @SWG\Tag(name="Job applications")
      * @Security(name="Bearer")
      *
      * @param Request $request
@@ -53,21 +54,18 @@ class ResumeController extends AbstractController
      *
      * @return Response
      */
-    public function list(
-        PaginatorInterface $paginator,
-        User $user,
-        Request $request
-    ): Response {
-        $resumes = $paginator->paginate(
+    public function responses(Request $request, PaginatorInterface $paginator, User $user): Response
+    {
+        $jobApplications = $paginator->paginate(
             $this->getDoctrine()
-                ->getRepository(Resume::class)
-                ->getAllResumesByUser($user, $request->get('query')),
+                ->getRepository(JobApplication::class)
+                ->getJobApplicationsByCompany($user->getCompany()),
             $request->get('page'),
             $this->getParameter('max_items_on_page')
         );
 
-        return $this->render('api/api_resume_list.html.twig', [
-            'resumes'  => $resumes,
+        return $this->render('api/api_job_applications.html.twig', [
+            'jobApplications' => $jobApplications,
         ]);
     }
 }

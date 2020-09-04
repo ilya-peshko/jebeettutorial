@@ -83,14 +83,14 @@ class JobRepository extends ServiceEntityRepository
             ->setParameter('category', $category)
             ->setParameter('date', new \DateTime())
             ->setParameter('activated', true);
-        if($request){
+        if ($request) {
             $jobs->andWhere('j.type LIKE :request')
                 ->orWhere('j.title LIKE :request')
                 ->orWhere('j.description LIKE :request')
                 ->orWhere('j.howToApply LIKE :request')
                 ->orWhere('j.position LIKE :request')
                 ->orWhere('j.location LIKE :request')
-                ->setParameter('request', $request);
+                ->setParameter('request', "%$request%");
         }
         return $jobs->getQuery();
     }

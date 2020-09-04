@@ -15,7 +15,7 @@ trait FormTrait
     public function createSearchForm(): FormInterface
     {
         return $this->createFormBuilder(null)
-            ->add('Request',TextType::class,[
+            ->add('Request', TextType::class, [
                 'required' => false,
             ])
             ->add('search', SubmitType::class, [

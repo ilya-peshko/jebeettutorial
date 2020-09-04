@@ -1,5 +1,5 @@
-class Resumes {
-    constructor(userId)
+class Category {
+    constructor(slug)
     {
         const getQueryParams = ( params, url ) => {
             let href = url;
@@ -9,26 +9,25 @@ class Resumes {
         };
 
         this.init = () => {
-            getResumeList();
-
+            getActiveJobsByCategory();
             $(document).on('click', '#search', function () {
-                getResumeList(1, document.getElementById("resume-search").value);
+                getActiveJobsByCategory(1, document.getElementById("search-input").value);
             })
 
             $(document).on('click', '.page-link', function (e) {
                 e.preventDefault();
                 if (!$(this).parent().hasClass('disabled')) {
                     let page = getQueryParams('page', $(this).attr('href'));
-                    getResumeList(page, document.getElementById("resume-search").value);
+                    getActiveJobsByCategory(page, document.getElementById("search-input").value);
                 }
             })
         };
 
-        function getResumeList(page = 1, searchQuery = '')
+        function getActiveJobsByCategory(page = 1, searchQuery = '')
         {
             $(document).ready(function () {
                 $.ajax({
-                    url: '/api/user/'+userId+'/resume/list?page='+page+'&query='+searchQuery,
+                    url: '/api/category/'+slug+'?page='+page+'&query='+searchQuery,
                     type: 'GET',
                     dataType: 'html',
                     async: true,
@@ -40,7 +39,7 @@ class Resumes {
                         $('.loader').hide();
                     },
                     success: function (data, status) {
-                        $('#resumes').html(data);
+                        $('#active-jobs-by-category').html(data);
                     },
                     error: function (xhr, status, error) {
                         let err = eval("(" + xhr.responseText + ")");

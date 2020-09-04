@@ -46,7 +46,7 @@ class Job
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @Groups({"category", "company", "job"})
+     * @Groups({"category", "api_category_job", "company", "job"})
      */
     private $id;
 
@@ -54,7 +54,7 @@ class Job
      * @var string
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"job"})
+     * @Groups({"api_category_job", "job"})
      */
     private $type;
 
@@ -62,7 +62,7 @@ class Job
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255)
-     * @Groups({"job"})
+     * @Groups({"api_category_job","job"})
      */
     private $title;
 
@@ -72,7 +72,7 @@ class Job
      * @ORM\ManyToOne(targetEntity="App\Entity\Company", inversedBy="jobs")
      * @ORM\JoinColumn(name="company_id", referencedColumnName="id", nullable=false)
      * @Assert\Type(type="App\Entity\Company")
-     * @Groups({"job"})
+     * @Groups({"api_category_job", "job"})
      */
     private $company;
 
@@ -80,7 +80,7 @@ class Job
      * @var string|null
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"job"})
+     * @Groups({"api_category_job", "job"})
      */
     private $url;
 
@@ -88,7 +88,7 @@ class Job
      * @var string
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"job"})
+     * @Groups({"api_category_job", "job"})
      */
     private $position;
 
@@ -96,7 +96,7 @@ class Job
      * @var string
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"job"})
+     * @Groups({"api_category_job", "job"})
      */
     private $location;
 
@@ -104,7 +104,7 @@ class Job
      * @var string
      *
      * @ORM\Column(type="text")
-     * @Groups({"job"})
+     * @Groups({"api_category_job", "job"})
      */
     private $description;
 
@@ -112,7 +112,7 @@ class Job
      * @var string
      *
      * @ORM\Column(type="text")
-     * @Groups({"job"})
+     * @Groups({"api_category_job", "job"})
      */
     private $howToApply;
 
@@ -120,7 +120,7 @@ class Job
      * @var bool
      *
      * @ORM\Column(type="boolean")
-     * @Groups({"job"})
+     * @Groups({"api_category_job", "job"})
      */
     private $public;
 
@@ -128,7 +128,7 @@ class Job
      * @var bool
      *
      * @ORM\Column(type="boolean")
-     * @Groups({"job"})
+     * @Groups({"api_category_job", "job"})
      */
     private $activated;
 
@@ -136,7 +136,7 @@ class Job
      * @var string
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"job"})
+     * @Groups({"api_category_job", "job"})
      */
     private $email;
 
@@ -144,7 +144,7 @@ class Job
      * @var \DateTime
      *
      * @ORM\Column(type="datetime")
-     * @Groups({"job"})
+     * @Groups({"api_category_job", "job"})
      */
     private $expiresAt;
 
@@ -154,7 +154,7 @@ class Job
      * @ORM\ManyToOne(targetEntity="Category", inversedBy="jobs")
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id", nullable=false)
      * @Assert\Type(type="App\Entity\Category")
-     * @Groups({"job"})
+     * @Groups({"api_category_job", "job"})
      */
     private $category;
 

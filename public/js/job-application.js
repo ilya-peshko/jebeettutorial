@@ -1,14 +1,15 @@
-class Jobs {
-    constructor()
+class JobApplication {
+    constructor(userId)
     {
         this.init = () => {
-            getActiveJobs();
+            getJobApplications();
         };
-        function getActiveJobs(page = 1)
+
+        function getJobApplications(page = 1)
         {
             $(document).ready(function () {
                 $.ajax({
-                    url: '/api/categories/activejobs',
+                    url: '/api/user/'+userId+'/job-application/responses?page='+page,
                     type: 'GET',
                     dataType: 'html',
                     async: true,
@@ -20,7 +21,7 @@ class Jobs {
                         $('.loader').hide();
                     },
                     success: function (data, status) {
-                        $('#activejob-list').append(data);
+                        $('#job-applications-list').html(data);
                     },
                     error: function (xhr, status, error) {
                         let err = eval("(" + xhr.responseText + ")");

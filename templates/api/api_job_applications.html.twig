@@ -1,0 +1,13 @@
+{% if jobApplications|length %}
+    {% include 'job_application/responses_table.html.twig' with {
+        'jobApplications': jobApplications
+    } only %}
+{% else %}
+    <h4>
+        No responses.
+    </h4>
+{% endif %}
+
+<div class="navigation text-center">
+    {{ knp_pagination_render(jobApplications) }}
+</div>
