@@ -33,13 +33,19 @@ class Category {
                     async: true,
 
                     beforeSend: function () {
-                        $('.loader').show()
+                        $('body').removeClass('loaded');
                     },
                     complete: function () {
-                        $('.loader').hide();
                     },
                     success: function (data, status) {
                         $('#active-jobs-by-category').html(data);
+                        $(document).ready(function () {
+                            $('body').addClass('loaded_hiding');
+                            setTimeout(function () {
+                                $('body').addClass('loaded').removeClass('loaded_hiding');
+                                document.body.classList.remove('loaded_hiding');
+                            }, 500);
+                        });
                     },
                     error: function (xhr, status, error) {
                         let err = eval("(" + xhr.responseText + ")");

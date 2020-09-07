@@ -2,6 +2,7 @@
 
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('css/search_form.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/preloader.css') }}">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
 {% endblock %}
 
@@ -21,7 +22,6 @@
         <button id="search" type="submit" class="btn p-1" ><i class="fa fa-search" aria-hidden="true"></i></button>
     </div>
     <div class="resume-wrapper mb-5">
-        <img src="{{ asset('images/ajax-loader.gif') }}" class="loader mx-auto" alt="">
         <div id="resumes"></div>
     </div>
 

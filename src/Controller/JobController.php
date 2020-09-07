@@ -36,8 +36,10 @@ class JobController extends AbstractController
      */
     public function list(EntityManagerInterface $em, JobHistoryService $jobHistoryService, Request $request): Response
     {
+
         return $this->render('job/list.html.twig', [
-            'historyJobs' => $jobHistoryService->getJobs(),
+            'historyJobs'  => $jobHistoryService->getJobs(),
+            'newVacancies' => $em->getRepository(Job::class)->getNewActiveJobs()
         ]);
     }
 

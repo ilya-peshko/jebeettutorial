@@ -14,13 +14,18 @@ class Jobs {
                     async: true,
 
                     beforeSend: function () {
-                        $('.loader').show()
                     },
                     complete: function () {
-                        $('.loader').hide();
                     },
                     success: function (data, status) {
                         $('#activejob-list').append(data);
+                        $(document).ready(function () {
+                            $('body').addClass('loaded_hiding');
+                            setTimeout(function () {
+                                $('body').addClass('loaded').removeClass('loaded_hiding');
+                                document.body.classList.remove('loaded_hiding');
+                            }, 500);
+                        });
                     },
                     error: function (xhr, status, error) {
                         let err = eval("(" + xhr.responseText + ")");

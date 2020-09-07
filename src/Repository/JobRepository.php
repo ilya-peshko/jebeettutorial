@@ -8,7 +8,6 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
-use http\Env\Request;
 
 /**
  * @method Job|null find($id, $lockMode = null, $lockVersion = null)
@@ -74,7 +73,7 @@ class JobRepository extends ServiceEntityRepository
      * @param null $request
      * @return AbstractQuery
      */
-    public function getActiveJobsByCategoryQuery(Category $category, $request = null) : AbstractQuery
+    public function getActiveJobsByCategoryQuery(Category $category, $request = null): AbstractQuery
     {
         $jobs = $this->createQueryBuilder('j')
             ->where('j.category = :category')
@@ -90,9 +89,27 @@ class JobRepository extends ServiceEntityRepository
                 ->orWhere('j.howToApply LIKE :request')
                 ->orWhere('j.position LIKE :request')
                 ->orWhere('j.location LIKE :request')
-                ->setParameter('request', "%$request%");
+                ->andWhere('j.category = :category')
+                ->setParameter('request', "%$request%")
+                ->setParameter('category', $category);
         }
         return $jobs->getQuery();
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getNewActiveJobs(): ?array
+    {
+        return $this->createQueryBuilder('j')
+            ->where('j.expiresAt > :date')
+            ->andWhere('j.activated = :activated')
+            ->setParameter('date', new \DateTime())
+            ->setParameter('activated', true)
+            ->orderBy('j.createdAt', 'DESC')
+            ->setMaxResults(5)
+            ->getQuery()
+            ->getResult();
     }
 
     /*

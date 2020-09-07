@@ -1,23 +1,54 @@
 {% extends 'base.html.twig' %}
 
-{% block javascripts %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/slider.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/preloader.css') }}" >
+{% endblock %}
 
+{% block javascripts %}
     <script src = "https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src = "{{ asset('js/jobs.js') }}"></script>
     <script type="text/javascript">
         let jobs = new Jobs();
         jobs.init();
     </script>
-
 {% endblock %}
+
 {% block body %}
 
+    {% if newVacancies|length %}
+        <div class="slideshow-container">
+            {% for newVacancy in newVacancies %}
+                <div class="mySlides fade-slider">
+                    <div class="text">
+                        {{ newVacancy.category }}:
+                        <a class="text-decoration-none" href="{{ path('job_show',{id:newVacancy.id}) }}">
+                            {{ newVacancy.title }}
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+                <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+                <a class="next" onclick="plusSlides(1)">&#10095;</a>
+            </div>
+
+            <div style="text-align:center">
+                <span class="dot" onclick="currentSlide(1)"></span>
+                <span class="dot" onclick="currentSlide(2)"></span>
+                <span class="dot" onclick="currentSlide(3)"></span>
+                <span class="dot" onclick="currentSlide(4)"></span>
+                <span class="dot" onclick="currentSlide(5)"></span>
+            </div>
+            <br>
+
+    {% endif %}
+
     {% include 'job/_job_history.html.twig' with {'historyJobs': historyJobs} only %}
-    <img src="{{ asset('images/ajax-loader.gif') }}" class="loader mx-auto" alt="">
+{#    <img src="{{ asset('images/ajax-loader.gif') }}" class="loader mx-auto" alt="">#}
     <div id="activejob-list"></div>
 
     {% if app.user and app.user.role('ROLE_EMPLOYER') and app.user.company %}
         <a href="{{ path('job_create') }}" class="btn btn-primary navbar-btn float-right">Post a Job</a>
     {% endif %}
-
+    <script src = "{{ asset('js/slider.js') }}"></script>
 {% endblock %}

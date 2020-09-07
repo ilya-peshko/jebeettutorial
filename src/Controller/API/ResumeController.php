@@ -4,7 +4,6 @@ namespace App\Controller\API;
 
 use App\Entity\Resume;
 use App\Entity\User\User;
-use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,8 +26,7 @@ class ResumeController extends AbstractController
      * @Route("/api/user/{id}/resume/list/", name="nelmio_api_resume", methods={"GET"})
      * @SWG\Get(
      *     description="Returns resumes by user",
-     *     produces={"text/html", "application/json"},
-     *     consumes={"text/html"}
+     *     produces={"text/html"},
      * )
      * @SWG\Response(
      *     response=200,

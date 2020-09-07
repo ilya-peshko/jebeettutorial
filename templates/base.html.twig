@@ -15,6 +15,12 @@
         <link href="{{ asset('css/base_page.css') }}" rel="stylesheet">
     </head>
     <body>
+    <div class="preloader">
+        <div class="preloader__row">
+            <div class="preloader__item"></div>
+            <div class="preloader__item"></div>
+        </div>
+    </div>
     <nav class="navbar navbar-dark bg-dark margin-bottom">
         <a class="navbar-brand" href="{{ path('job_list') }}">Jobeet</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample01" aria-controls="navbarsExample01" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,11 +56,11 @@
                         </li>
                     {% endif %}
                     <li class="nav-item">
-                        <a href="{{ path('app_logout') }}" class="btn btn-info nav-link float-left">Log out</a>
+                        <a href="{{ path('app_logout') }}" style="padding: 0 5px 0 5px" class="btn btn-info nav-link float-left">Log out</a>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a href="{{ path('app_login') }}" class="btn btn-info nav-link float-left">Log in</a>
+                        <a href="{{ path('app_login') }}" style="padding: 0 5px 0 5px" class="btn btn-info nav-link float-left">Log in</a>
                     </li>
                 {% endif %}
             </ul>
@@ -62,7 +68,7 @@
     </nav>
 
     <div class="container">
-            {% block body %}{% endblock %}
+        {% block body %}{% endblock %}
     </div>
 
     <script
@@ -74,46 +80,3 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     </body>
 </html>
-
-{#<ul class="nav nav-tabs">#}
-{#    {% if app.user and app.user.role('ROLE_EMPLOYER') %}#}
-{#        <li class="nav-item">#}
-{#            <a class="nav-link " href="{{ path('company_show') }}">My company</a>#}
-{#        </li>#}
-{#        {% if app.user.company|length %}#}
-{#            <li class="nav-item">#}
-{#                <a class="nav-link " href="{{ path('job_application_responses') }}">My responses</a>#}
-{#            </li>#}
-{#        {% endif %}#}
-{#    {% endif %}#}
-
-{#    {% if app.user and app.user.role('ROLE_APPLICANT') %}#}
-{#        <li class="nav-item">#}
-{#            <a class="nav-link " href="{{ path('resume_list') }}">My resumes</a>#}
-{#        </li>#}
-{#        <li class="nav-item">#}
-{#            <a class="nav-link " href="{{ path('job_application_list') }}">My responses</a>#}
-{#        </li>#}
-{#    {% endif %}#}
-
-{#    {% if app.user %}#}
-{#        <li class="nav-item pull-right disabled">#}
-{#            <p class =" ">{{ app.user.username }}</p>#}
-{#        </li>#}
-{#        <li class="nav-item pull-right disabled">#}
-{#            <p class ="nav-link">{{ app.user.meta }}</p>#}
-{#        </li>#}
-{#        {% if app.user and app.user.role('ROLE_ADMIN') %}#}
-{#            <li class="nav-item pull-right">#}
-{#                <a href="{{ path('admin') }}" class="btn btn-primary navbar-btn">Admin panel</a>#}
-{#            </li>#}
-{#        {% endif %}#}
-{#        <li class="nav-item pull-right">#}
-{#            <a href="{{ path('app_logout') }}" class="btn btn-info nav-link">Log out</a>#}
-{#        </li>#}
-{#    {% else %}#}
-{#        <li class="nav-item pull-right">#}
-{#            <a href="{{ path('app_login') }}" class="btn btn-info nav-link">Log in</a>#}
-{#        </li>#}
-{#    {% endif %}#}
-{#</ul>#}
