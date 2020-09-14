@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/card_elements.css') }}">
+    <link rel="stylesheet" type='text/css' href="{{ asset('css/form.css') }}">
+    <link rel="stylesheet" type='text/css' href="{{ asset('css/modal.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="form-style subscribe-form pb-5">
+        <form id="subscription-form">
+            <h1 class="subscribe-title mb-3">Subscribe form</h1>
+
+            {% for product in products %}
+                <div class="form_radio">
+                    <input id="radio" type="radio" data-price-id="{{ product.priceId }}" name="radio" required>
+                    <label for="radio">{{ product.product }}</label>
+                    <p>Price: {{ product.price / 100 }}.00$</p>
+                </div>
+            {% endfor %}
+
+            <label for="name">Billing</label><input type="text" id="name" placeholder="Billing name" required>
+            <div id="card-element" class="card">
+            </div>
+            <div id="card-errors" role="alert"></div>
+
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <button type="submit" class="btn btn-primary float-right mt-3 trigger-subscription">
+                        Subscribe
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-subscription">
+                <div class="modal-subscription-content">
+                    <span class="close-subscription-button">&times;</span>
+                    <h1>Subscription</h1>
+                    <h3 id="modal-text">
+                        Subscription in progress! Please wait...
+                    </h3>
+                    <img src="{{ asset('images/modal-loader.gif') }}" id="modal-loader" alt="">
+                </div>
+            </div>
+        </form>
+        <script src="https://js.stripe.com/v3/"></script>
+        <script src="{{ asset('js/stripe.js') }}"></script>
+
+        <script type = "text/javascript">
+            let stripe = new StripeSubscribe('{{ pk_key }}', '{{ stripeCustomerId }}');
+            stripe.init();
+        </script>
+    </div>
+{% endblock %}

@@ -10,6 +10,8 @@ parameters:
     jobs_web_directory: '/uploads/jobs'
     image_directory: '/uploads/image'
     jwt_key_pass_phrase: ~
+    stripe_publishable_key: '%env(STRIPE_PUBLISHABLE_KEY)%'
+    stripe_secret_key: '%env(STRIPE_SECRET_KEY)%'
 
 services:
     # default configuration for services in *this* file

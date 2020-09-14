@@ -2,10 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Stripe;
 use App\Entity\User\User;
 use App\Form\RegistrationFormType;
 use App\Security\EmailVerifier;
 use App\Security\LoginFormAuthenticator;
+use Stripe\Exception\ApiErrorException;
+use Stripe\StripeClient;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,6 +42,7 @@ class RegistrationController extends AbstractController
      * @param UserPasswordEncoderInterface $passwordEncoder
      * @param GuardAuthenticatorHandler $guardHandler
      * @param LoginFormAuthenticator $authenticator
+     * @throws ApiErrorException
      *
      * @return Response
      */
@@ -49,6 +53,7 @@ class RegistrationController extends AbstractController
         LoginFormAuthenticator $authenticator
     ): Response {
         $user = new User();
+        $stripeEntity = new Stripe();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
@@ -62,8 +67,18 @@ class RegistrationController extends AbstractController
             );
             $user->setEnabled(true);
 
+
+            $stripe = new StripeClient($this->getParameter('stripe_secret_key'));
+            $stripeCustomer = $stripe->customers->create([
+                'email'       => $user->getEmail(),
+                'description' => $user->getUsername()
+            ]);
+
+            $stripeEntity->setUser($user)->setStripeCustomerId($stripeCustomer->id);
+
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
+            $entityManager->persist($stripeEntity);
             $entityManager->flush();
 
             // generate a signed url and email it to the user
@@ -93,6 +108,7 @@ class RegistrationController extends AbstractController
     /**
      * @Route("/verify/email", name="app_verify_email")
      * @param Request $request
+     *
      * @return Response
      */
     public function verifyUserEmail(Request $request): Response

@@ -105,6 +105,13 @@ class User implements UserInterface
     private $isVerified = false;
 
     /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Stripe", mappedBy="user")
+     *
+     * @Groups({"user"})
+     */
+    private $stripe;
+
+    /**
      * User constructor.
      */
     public function __construct()
@@ -360,14 +367,40 @@ class User implements UserInterface
         return $userRole;
     }
 
+    /**
+     * @return bool
+     */
     public function isVerified(): bool
     {
         return $this->isVerified;
     }
 
+    /**
+     * @param bool $isVerified
+     * @return $this
+     */
     public function setIsVerified(bool $isVerified): self
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStripe()
+    {
+        return $this->stripe;
+    }
+
+    /**
+     * @param $stripe
+     * @return $this
+     */
+    public function setStripe($stripe): self
+    {
+        $this->stripe = $stripe;
 
         return $this;
     }

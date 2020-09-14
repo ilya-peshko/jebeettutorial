@@ -74,3 +74,10 @@
 .form-style__padding{
     padding: 50px;
 }
+
+.subscribe-form{
+    width: 500px;
+}
+.subscribe-title{
+    margin: 0 auto;
+}

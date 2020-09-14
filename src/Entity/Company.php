@@ -189,7 +189,7 @@ class Company implements \Serializable
      */
     public function getCountActiveJobs(): int
     {
-        return count($this->jobs->filter(static function(Job $job) {
+        return count($this->jobs->filter(static function (Job $job) {
             return $job->getExpiresAt() > new \DateTime() && $job->isActivated();
         }));
     }
@@ -199,7 +199,7 @@ class Company implements \Serializable
      */
     public function getCountExpiredJobs(): int
     {
-        return count($this->jobs->filter(static function(Job $job) {
+        return count($this->jobs->filter(static function (Job $job) {
             return $job->getExpiresAt() < new \DateTime();
         }));
     }

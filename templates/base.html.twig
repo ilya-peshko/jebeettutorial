@@ -48,6 +48,9 @@
                     </li>
                 {% endif %}
                 {% if app.user %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('stripe_subscription') }}">Subscriptions</a>
+                    </li>
                     <span class="navbar-brand">User: {{ app.user.username }}</span>
                     <span class="navbar-brand">Role: {{ app.user.meta }}</span>
                     {% if app.user and app.user.role('ROLE_ADMIN') %}
