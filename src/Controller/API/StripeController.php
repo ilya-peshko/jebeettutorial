@@ -56,9 +56,8 @@ class StripeController extends BaseController
             ]);
 
             return new JsonResponse($subscription);
-
         } catch (\Exception $e) {
-            return $this->errorMessage($e->getMessage(), $e->getCode());
+            return new JsonResponse($e);
         }
     }
 
@@ -77,10 +76,10 @@ class StripeController extends BaseController
 
         try {
             $payment_method = $stripe->paymentMethods->retrieve(
-                $body->paymentMethodId
+                $body['paymentMethodId']
             );
             $payment_method->attach([
-                'customer' => $body->customerId,
+                'customer' => $body['customerId'],
             ]);
         } catch (\Exception $e) {
             return new JsonResponse($e);
@@ -102,6 +101,7 @@ class StripeController extends BaseController
 
     /**
      * @Route("/api/cancel-subscription", name="stripe_cancel_subscription", methods={"POST"})
+     *
      * @param Request $request
      *
      * @return Response
@@ -117,19 +117,20 @@ class StripeController extends BaseController
                 'stripeCustomerId' => $body['customerId']
             ]);
 
-
             $subscription = $stripe->subscriptions->retrieve(
                 $body['subscriptionId']
             );
-            $subscription->delete();
+
+            if ($subscription->status !== 'canceled') {
+                $subscription->delete();
+            }
 
             $stripeEntity->setStripeSubscriptionId(null);
             $stripeEntity->setStripeProductId(null);
             $this->getDoctrine()->getManager()->persist($stripeEntity);
             $this->getDoctrine()->getManager()->flush();
-
         } catch (\Exception $e) {
-            return $this->errorMessage('Error');
+            return $this->errorMessage($e->getMessage(), $e->getCode());
         }
 
         return new JsonResponse($subscription);
@@ -154,11 +155,34 @@ class StripeController extends BaseController
             $stripeEntity->setStripeSubscriptionId($body['subscriptionId']);
             $this->getDoctrine()->getManager()->persist($stripeEntity);
             $this->getDoctrine()->getManager()->flush();
-
         } catch (\Exception $e) {
-            return $this->errorMessage('Error');
+            return $this->errorMessage($e->getMessage(), $e->getCode());
         }
 
         return $this->successMessage('Success record');
+    }
+
+    /**
+     * @Route("/api/get-subscription-by-id", name="stripe_get_subscription_by_id", methods={"GET","POST"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function getSubscription(Request $request): JsonResponse
+    {
+        try {
+            $stripe = new StripeClient($this->getParameter('stripe_secret_key'));
+            $body = json_decode($request->getContent(), true);
+
+            $subscription = $stripe->subscriptions->retrieve(
+                $body['subscriptionId'],
+                []
+            );
+        } catch (\Exception $e) {
+            return $this->errorMessage($e->getMessage(), $e->getCode());
+        }
+
+        return new JsonResponse($subscription);
     }
 }

@@ -8,7 +8,6 @@ class StripeSubscribe {
             let modalLoader = document.getElementById('modal-loader');
             let trigger = document.querySelector(".trigger-subscription");
             let closeButton = document.querySelector(".close-subscription-button");
-
             let stripe = Stripe(pk_key);
             let elements = stripe.elements();
             let form = document.getElementById('subscription-form');
@@ -116,34 +115,6 @@ class StripeSubscribe {
                             showCardError(error);
                         })
                 );
-            }
-
-            function onSubscriptionComplete(result)
-            {
-                // Payment was successful.
-                if (result.subscription.status === 'active') {
-                    modalLoader.style.display = "none";
-                    modalText.innerHTML = "Subscription completed!";
-                    setInterval(function () {
-                        window.location.reload(true);
-                    }, 2000);
-                    // Change your UI to show a success message to your customer.
-                    // Call your backend to grant access to your service based on
-                    // `result.subscription.items.data[0].price.product` the customer subscribed to.
-                    return (
-                        fetch('/api/record-product-and-sub-id', {
-                            method: 'post',
-                            headers: {
-                                'Content-type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                customerId: customerId,
-                                productId: result.subscription.items.data[0].price.product,
-                                subscriptionId: result.subscription.items.data[0].subscription,
-                            })
-                        }).then()
-                    )
-                }
             }
 
             function handlePaymentThatRequiresCustomerAction({
@@ -282,6 +253,72 @@ class StripeSubscribe {
                 );
             }
 
+            function onSubscriptionComplete(result)
+            {
+                if (result.subscription === undefined) {
+                    getSubscription(result.invoice.subscription).then(onSubscriptionComplete);
+                }
+                if (result.subscription.status === 'incomplete') {
+                    getSubscription(result.subscription.id).then(onSubscriptionComplete);
+                }
+                if (result.subscription.status === 'active') {
+                    // Change your UI to show a success message to your customer.
+                    // Call your backend to grant access to your service based on
+                    // `result.subscription.items.data[0].price.product` the customer subscribed to.
+                    localStorage.clear();
+                    modalLoader.style.display = "none";
+                    modalText.innerHTML = "Subscription completed!";
+                    setInterval(function () {
+                        window.location.reload(true);
+                    }, 2000);
+                    recordIds(result).then();
+                }
+            }
+
+            function recordIds(result)
+            {
+                return (
+                    fetch('/api/record-product-and-sub-id', {
+                        method: 'post',
+                        headers: {
+                            'Content-type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            customerId: customerId,
+                            productId: result.subscription.items.data[0].price.product,
+                            subscriptionId: result.subscription.items.data[0].subscription,
+                        })
+                    }).then())
+            }
+
+            function getSubscription(subscriptionId)
+            {
+                return (
+                    fetch('/api/get-subscription-by-id', {
+                        method: 'post',
+                        headers: {
+                            'Content-type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            subscriptionId: subscriptionId,
+                        })
+                    }).then((response) => {
+                        return response.json();
+                    }).then((result) => {
+                        if (result.error) {
+                            throw result;
+                        }
+                        return result;
+                    }).then((result) => {
+                        return {
+                            subscription: result,
+                        };
+                    }).catch((error) => {
+                        showModalError(error);
+                        showCardError(error);
+                    })
+                )
+            }
             function toggleModal()
             {
                 modal.classList.toggle("show-modal");
@@ -318,6 +355,7 @@ class StripeSubscribe {
                 const latestInvoicePaymentIntentStatus = localStorage.getItem(
                     'latestInvoicePaymentIntentStatus'
                 );
+
                 if (latestInvoicePaymentIntentStatus === 'requires_payment_method') {
                     const invoiceId = localStorage.getItem('latestInvoiceId');
                     const isPaymentRetry = true;

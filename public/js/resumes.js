@@ -50,7 +50,6 @@ class Resumes {
                     },
                     error: function (xhr, status, error) {
                         let err = eval("(" + xhr.responseText + ")");
-                        console.log(err);
                     }
                 });
             });

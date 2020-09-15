@@ -23,10 +23,19 @@ class StripeCancel{
                 })
                     .then(response => {
                         return response.json();
+                    }).then((result) => {
+                        if (result.error) {
+                            throw result;
+                        }
+                        return result;
+                    }).then(cancelSubscriptionResponse => {
                     })
-                    .then(cancelSubscriptionResponse => {
-                    })
-                    .then(cancelInfo);
+                    .then(cancelInfo)
+                    .catch((error) => {
+                        modalText.innerHTML = error.error;
+                        modalLoader.style.display = "none";
+                        closeButton.style.visibility = 'visible';
+                    });
             }
 
             function cancelInfo()

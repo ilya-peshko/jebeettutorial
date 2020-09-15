@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Controller\API;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -36,8 +35,8 @@ class BaseController extends AbstractController
     protected function errorMessage(string $message, int $code = Response::HTTP_INTERNAL_SERVER_ERROR): JsonResponse
     {
         return new JsonResponse([
-            'code'    => $code,
-            'message' => $message
+            'code'  => $code,
+            'error' => $message
         ]);
     }
 }
