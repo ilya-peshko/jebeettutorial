@@ -2,14 +2,18 @@
 
 namespace App\Controller;
 
+use App\Controller\API\BaseController;
 use App\Entity\Job;
 use App\Entity\Traits\FormTrait;
 use App\Entity\User\User;
 use App\Form\JobType;
 use App\Service\JobHistoryService;
+use Facebook\Exceptions\FacebookSDKException;
+use Facebook\Facebook;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,7 +24,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
  * Class JobController
  * @package App\Controller
  */
-class JobController extends AbstractController
+class JobController extends BaseController
 {
     use FormTrait;
 
@@ -36,7 +40,6 @@ class JobController extends AbstractController
      */
     public function list(EntityManagerInterface $em, JobHistoryService $jobHistoryService, Request $request): Response
     {
-
         return $this->render('job/list.html.twig', [
             'historyJobs'  => $jobHistoryService->getJobs(),
             'newVacancies' => $em->getRepository(Job::class)->getNewActiveJobs()
@@ -178,5 +181,42 @@ class JobController extends AbstractController
         }
 
         return $this->redirectToRoute('job_list');
+    }
+
+    /**
+     * @Route("job/{id}/edit/post/facebook", name="job_post_facebook", methods="POST")
+     *
+     * @Entity("job", expr="repository.find(id)")
+     * @param Job $job
+     * @throws FacebookSDKException
+     *
+     * @return Response
+     */
+    public function postFacebook(Job $job): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $options = [
+            'app_id' => $this->getParameter('app_facebook_id'),
+            'app_secret' => $this->getParameter('app_facebook_secret'),
+        ];
+
+        $facebook = new Facebook($options);
+        $params = [
+            'message' => 'test',
+            'name' => $job->getTitle(),
+            'description' => $job->getDescription(),
+        ];
+        try {
+            $facebook->post(
+                '/'.$user->getFacebookId().'/feed',
+                $params,
+                $this->getParameter('access_token_facebook')
+            );
+            $this->addFlash('success', 'Post successfully published');
+        } catch (\Exception $e) {
+            return new JsonResponse($e->getMessage());
+        }
+        return new JsonResponse($this->successMessage('Post successfully published'));
     }
 }

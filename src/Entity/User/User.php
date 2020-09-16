@@ -42,7 +42,7 @@ class User implements UserInterface
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=25, unique=true)
+     * @ORM\Column(type="string", length=50, unique=true)
      * @Assert\NotBlank()
      * @Groups({"user"})
      */
@@ -145,9 +145,9 @@ class User implements UserInterface
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getFacebookId(): int
+    public function getFacebookId(): ?int
     {
         return $this->facebookId;
     }

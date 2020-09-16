@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Controller\API\BaseController;
 use App\Entity\Company;
 use App\Entity\User\User;
 use App\Form\CompanyType;
@@ -10,11 +11,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class CompanyController extends AbstractController
+class CompanyController extends BaseController
 {
     /**
      * @Route("/company/create", name="company_create", methods={"GET", "POST"})
@@ -112,7 +114,7 @@ class CompanyController extends AbstractController
     }
 
     /**
-     * @Route("company/edit/delete/{id}", name="company_delete", methods="GET")
+     * @Route("company/edit/delete/{id}", name="company_delete", methods="POST")
      * @Entity("company", expr="repository.find(id)")
      * @param Company $company
      * @param EntityManagerInterface $em
@@ -127,6 +129,6 @@ class CompanyController extends AbstractController
         $em->remove($company);
         $em->flush();
 
-        return $this->redirectToRoute('company_show');
+        return $this->successMessage('Delete success');
     }
 }

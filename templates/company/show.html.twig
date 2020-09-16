@@ -28,6 +28,11 @@
                 'company': company,
             } only %}
         {% endif %}
+        <script src = "{{ asset('js/company.js') }}"></script>
+        <script type="text/javascript">
+            let company = new Company('{{ app.user.company.id }}');
+            company.init();
+        </script>
     {% else %}
         <h4>
             You have no company.
@@ -36,4 +41,5 @@
             {% endif %}
         </h4>
     {% endif %}
+
 {% endblock %}

@@ -18,6 +18,12 @@
                 <span class="fa fa-check" aria-hidden="true"></span>
                 Response
             </a>
+            {% if app.user and app.user.facebookId %}
+                <button id="facebook-post" type="button" class="btn btn-outline-dark" onclick="return confirm('Are you sure?')">
+                    <span class="fa fa-facebook" aria-hidden="true"></span>
+                    Post on facebook
+                </button>
+            {% endif %}
         {% endif %}
 
         {% if job.activated %}

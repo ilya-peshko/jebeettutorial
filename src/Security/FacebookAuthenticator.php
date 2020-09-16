@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Entity\Stripe;
 use App\Entity\User\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -10,6 +11,7 @@ use KnpU\OAuth2ClientBundle\Security\Authenticator\SocialAuthenticator;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use League\OAuth2\Client\Provider\FacebookUser;
 use League\OAuth2\Client\Token\AccessToken;
+use Stripe\StripeClient;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,8 +26,8 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
-use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelper;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class FacebookAuthenticator extends SocialAuthenticator
 {
@@ -35,15 +37,17 @@ class FacebookAuthenticator extends SocialAuthenticator
     private $resetPasswordHelper;
     private $mailer;
     private $passwordEncoder;
+    private $params;
 
     /**
      * FacebookAuthenticator constructor.
+     * @param UserPasswordEncoderInterface $passwordEncoder
+     * @param MailerInterface $mailer
+     * @param ResetPasswordHelperInterface $resetPasswordHelper
      * @param ClientRegistry $clientRegistry
      * @param EntityManagerInterface $em
      * @param RouterInterface $router
-     * @param ResetPasswordHelperInterface $resetPasswordHelper
-     * @param MailerInterface $mailer
-     * @param  $passwordEncoder
+     * @param ParameterBagInterface $params
      */
     public function __construct(
         UserPasswordEncoderInterface $passwordEncoder,
@@ -51,15 +55,16 @@ class FacebookAuthenticator extends SocialAuthenticator
         ResetPasswordHelperInterface $resetPasswordHelper,
         ClientRegistry $clientRegistry,
         EntityManagerInterface $em,
-        RouterInterface $router
-    )
-    {
+        RouterInterface $router,
+        ParameterBagInterface $params
+    ) {
         $this->clientRegistry      = $clientRegistry;
         $this->em                  = $em;
         $this->router              = $router;
         $this->resetPasswordHelper = $resetPasswordHelper;
         $this->mailer              = $mailer;
         $this->passwordEncoder     = $passwordEncoder;
+        $this->params              = $params;
     }
 
     /**
@@ -117,15 +122,25 @@ class FacebookAuthenticator extends SocialAuthenticator
 
         if ($user === null) {
             $user = new User();
+            $stripeEntity = new Stripe();
             $password = $this->generateRandomPassword(8);
             $user->setEmail($email)
                 ->setUsername($email)
                 ->setFacebookId($facebookUser->getId())
                 ->setEnabled(true)
                 ->setIsVerified(true)
-                ->setPassword($this->passwordEncoder->encodePassword($user, $password));
+                ->setPassword($this->passwordEncoder->encodePassword($user, $password))
+                ->setRoles(['ROLE_APPLICANT']);
+
+            $stripe = new StripeClient($this->params->get('stripe_secret_key'));
+            $stripeCustomer = $stripe->customers->create([
+                'email'       => $user->getEmail(),
+                'description' => $user->getUsername()
+            ]);
+            $stripeEntity->setUser($user)->setStripeCustomerId($stripeCustomer->id);
 
             $this->em->persist($user);
+            $this->em->persist($stripeEntity);
             $this->em->flush();
 
             $resetToken = $this->resetPasswordHelper->generateResetToken($user);

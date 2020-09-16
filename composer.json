@@ -19,6 +19,7 @@
         "league/oauth2-facebook": "^2.0",
         "lexik/jwt-authentication-bundle": "^2.8",
         "liip/imagine-bundle": "^2.3",
+        "martin-georgiev/social-post-bundle": "^3.1",
         "nelmio/api-doc-bundle": "^3.7",
         "nelmio/cors-bundle": "^2.1",
         "php-amqplib/php-amqplib": "^2.11",
