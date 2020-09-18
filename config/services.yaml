@@ -14,7 +14,7 @@ parameters:
     stripe_secret_key: '%env(STRIPE_SECRET_KEY)%'
     app_facebook_id: '%env(OAUTH_FACEBOOK_ID)%'
     app_facebook_secret: '%env(OAUTH_FACEBOOK_SECRET)%'
-    access_token_facebook: '%env(FACEBOOK_ACCESS_TOKEN)%'
+    facebook_access_token: '%env(FACEBOOK_ACCESS_TOKEN)%'
 
 services:
     # default configuration for services in *this* file

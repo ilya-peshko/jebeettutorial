@@ -96,7 +96,7 @@ class FacebookAuthenticator extends SocialAuthenticator
     /**
      * @param mixed $credentials
      * @param UserProviderInterface $userProvider
-     * @throws TransportExceptionInterface*@throws \Exception
+     * @throws TransportExceptionInterface
      * @throws ResetPasswordExceptionInterface
      * @throws Exception
      *
@@ -112,6 +112,7 @@ class FacebookAuthenticator extends SocialAuthenticator
 
         $existingUser = $this->em->getRepository(User::class)
             ->findOneBy(['facebookId' => $facebookUser->getId()]);
+
         if ($existingUser) {
             return $existingUser;
         }
@@ -139,8 +140,8 @@ class FacebookAuthenticator extends SocialAuthenticator
             ]);
             $stripeEntity->setUser($user)->setStripeCustomerId($stripeCustomer->id);
 
+            $user->setStripe($stripeEntity);
             $this->em->persist($user);
-            $this->em->persist($stripeEntity);
             $this->em->flush();
 
             $resetToken = $this->resetPasswordHelper->generateResetToken($user);

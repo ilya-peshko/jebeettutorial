@@ -22,7 +22,6 @@ class FacebookPost {
                     })
                 )
             }
-
             let facebookButton = document.getElementById('facebook-post');
             facebookButton.addEventListener('click', function (event) {
                 postJobOnFacebook().then();

@@ -8,19 +8,15 @@ use App\Entity\Resume;
 use App\Entity\Traits\FormTrait;
 use App\Entity\User\User;
 use App\Form\ResumeType;
-use App\Service\RabbitMQ\SendEmailConsumer;
 use Doctrine\ORM\EntityManagerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ResumeController extends AbstractController
@@ -64,14 +60,13 @@ class ResumeController extends AbstractController
             'User tried to access a page'
         );
 
+        /** @var User $user */
+        $user = $this->getUser();
         $resume = new Resume();
+
         $form = $this->createForm(ResumeType::class, $resume);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
-
-            /** @var User $user */
-            $user = $this->getUser();
             $resume->setUser($user);
 
             $em->persist($resume);
@@ -84,6 +79,7 @@ class ResumeController extends AbstractController
 
         return $this->render('resume/create.html.twig', [
             'form' => $form->createView(),
+            'appFacebookId' => $this->getParameter('app_facebook_id')
         ]);
     }
 

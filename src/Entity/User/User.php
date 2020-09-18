@@ -3,6 +3,7 @@
 namespace App\Entity\User;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Entity\Stripe;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -105,7 +106,7 @@ class User implements UserInterface
     private $isVerified = false;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Stripe", mappedBy="user")
+     * @ORM\OneToOne(targetEntity="App\Entity\Stripe", mappedBy="user", cascade={"persist"})
      *
      * @Groups({"user"})
      */
@@ -395,10 +396,10 @@ class User implements UserInterface
     }
 
     /**
-     * @param $stripe
+     * @param Stripe $stripe
      * @return $this
      */
-    public function setStripe($stripe): self
+    public function setStripe(Stripe $stripe): self
     {
         $this->stripe = $stripe;
 
