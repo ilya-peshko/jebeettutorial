@@ -14,7 +14,7 @@ class JobController extends AbstractController
     /**
      * Lists all job entities.
      *
-     * @Route("/api/categories/activejobs/", name="api_activejobs", methods={"GET"})
+     * @Route("/{_locale<en|ru>}/api/categories/activejobs/", name="api_activejobs", methods={"GET"})
      * @param Request $request
      * @param EntityManagerInterface $em
      *

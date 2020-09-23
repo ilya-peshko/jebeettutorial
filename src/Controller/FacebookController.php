@@ -13,7 +13,7 @@ class FacebookController extends AbstractController
     /**
      * Link to this controller to start the "connect" process
      *
-     * @Route("/connect/facebook", name="connect_facebook_start")
+     * @Route("/{_locale<en|ru>}/connect/facebook", name="connect_facebook_start")
      *
      * @param ClientRegistry $clientRegistry
      * @return RedirectResponse

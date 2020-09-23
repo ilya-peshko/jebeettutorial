@@ -31,21 +31,21 @@
 
         <p>{{ resume.cityOfResidence }}</p>
         <div class="col-sm-2">
-            <i class="float-right"> Date of birthday {{ resume.dateOfBirthday|date('m/d/Y') }}</i>
+            <i class="float-right">{{ 'Date of birthday'|trans }} {{ resume.dateOfBirthday|date('m/d/Y') }}</i>
         </div>
         <div class="row">
            {% if app.user and app.user.role('ROLE_APPLICANT') %}
             <div class="col-sm-12 text-right">
                 <a class="btn btn-default" href="{{ path('resume_list') }}">
                     <span class="fa fa-arrow-left" aria-hidden="true"></span>
-                    Back to list
+                    {{ 'back.to.list'|trans }}
                 </a>
             </div>
             {% elseif app.user and app.user.role('ROLE_EMPLOYER')%}
             <div class="col-sm-12 text-right">
                 <a class="btn btn-default" href="{{ path('job_application_responses') }}">
                     <span class="fa fa-arrow-left" aria-hidden="true"></span>
-                    Back to list
+                    {{ 'back.to.list'|trans }}
                 </a>
             </div>
             {% endif %}

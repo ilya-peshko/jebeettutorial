@@ -29,9 +29,17 @@ class JobController extends BaseController
     use FormTrait;
 
     /**
+     * @Route("/")
+     */
+    public function indexNoLocale()
+    {
+        return $this->redirectToRoute('job_list', ['_locale' => 'en']);
+    }
+
+    /**
      * Lists all job entities.
      *
-     * @Route("/", name="job_list", methods={"GET", "POST"})
+     * @Route("/{_locale<en|ru>}/", name="job_list", methods={"GET", "POST"})
      * @param Request $request
      * @param EntityManagerInterface $em
      * @param JobHistoryService $jobHistoryService
@@ -47,7 +55,7 @@ class JobController extends BaseController
     }
 
     /**
-     * @Route("job/{id}", name="job_show", methods="GET", requirements={"id" = "\d+"})
+     * @Route("{_locale<en|ru>}/job/{id}", name="job_show", methods="GET", requirements={"id" = "\d+"})
      *
      * @Entity("job", expr="repository.findActiveJob(id)")
      *
@@ -70,7 +78,7 @@ class JobController extends BaseController
     }
 
     /**
-     * @Route("/job/create", name="job_create", methods={"GET", "POST"})
+     * @Route("/{_locale<en|ru>}/job/create", name="job_create", methods={"GET", "POST"})
      * @param Request $request
      * @param EntityManagerInterface $em
      * @IsGranted("ROLE_EMPLOYER")
@@ -109,7 +117,7 @@ class JobController extends BaseController
     }
 
     /**
-     * @Route("/job/{id}/edit", name="job_edit", methods={"GET", "POST"})
+     * @Route("/{_locale<en|ru>}/job/{id}/edit", name="job_edit", methods={"GET", "POST"})
      *
      * @param Request $request
      * @param Job $job

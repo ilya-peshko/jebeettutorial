@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class CompanyController extends BaseController
 {
     /**
-     * @Route("/company/create", name="company_create", methods={"GET", "POST"})
+     * @Route("/{_locale<en|ru>}/company/create", name="company_create", methods={"GET", "POST"})
      * @param Request $request
      * @param EntityManagerInterface $em
      * @IsGranted("ROLE_EMPLOYER")
@@ -54,7 +54,7 @@ class CompanyController extends BaseController
     }
 
     /**
-     * @Route("company/show", name="company_show", methods="GET", requirements={"id" = "\d+"})
+     * @Route("/{_locale<en|ru>}/company/show", name="company_show", methods="GET", requirements={"id" = "\d+"})
      *
      * @IsGranted("ROLE_EMPLOYER")
      *
@@ -79,7 +79,7 @@ class CompanyController extends BaseController
     }
 
     /**
-     * @Route("/company/edit", name="company_edit", methods={"GET", "POST"})
+     * @Route("/{_locale<en|ru>}/company/edit", name="company_edit", methods={"GET", "POST"})
      *
      * @param Request $request
      * @param EntityManagerInterface $em

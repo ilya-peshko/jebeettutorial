@@ -1,5 +1,5 @@
 class Jobs {
-    constructor()
+    constructor(locale)
     {
         this.init = () => {
             getActiveJobs();
@@ -8,7 +8,7 @@ class Jobs {
         {
             $(document).ready(function () {
                 $.ajax({
-                    url: '/api/categories/activejobs',
+                    url: '/'+ locale +'/api/categories/activejobs',
                     type: 'GET',
                     dataType: 'html',
                     async: true,

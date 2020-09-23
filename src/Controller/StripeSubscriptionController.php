@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class StripeSubscriptionController extends AbstractController
 {
     /**
-     * @Route("/subscription", name="stripe_subscription")
+     * @Route("/{_locale<en|ru>}/subscription", name="stripe_subscription")
      *
      * @throws ApiErrorException
      *

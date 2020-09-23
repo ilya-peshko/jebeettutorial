@@ -4,7 +4,7 @@
     {% include 'job/table.html.twig' with {'jobs': activeJobs} only %}
 
     {% if app.user and app.user.role('ROLE_EMPLOYER') %}
-        <a href="{{ path('job_create') }}" class="btn btn-primary navbar-btn float-right">Post a Job</a>
+        <a href="{{ path('job_create') }}" class="btn btn-primary navbar-btn float-right">{{ 'post.job'|trans }}</a>
     {% endif %}
 
     <div class="navigation text-center">
@@ -12,6 +12,6 @@
     </div>
 {% else %}
     <h4>
-        No active jobs.
+        {{ 'no.act.jobs'|trans }}.
     </h4>
 {% endif %}

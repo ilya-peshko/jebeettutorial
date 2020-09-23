@@ -22,7 +22,7 @@ class JobApplicationController extends AbstractController
 {
     /**
      * @Route(
-     *     "/api/user/{id}/job-application/responses",
+     *     "/{_locale<en|ru>}/api/user/{id}/job-application/responses",
      *     name="nelmio_api_job_application_responses",
      *     methods="GET"
      * )

@@ -14,7 +14,7 @@ class JobApplicationController extends AbstractController
 {
     /**
      * @Route(
-     *     "/job-application/{page}",
+     *     "/{_locale<en|ru>}/job-application/{page}",
      *     name="job_application_list",
      *     methods="GET",
      *     defaults={"page": 1},
@@ -46,7 +46,7 @@ class JobApplicationController extends AbstractController
 
     /**
      * @Route(
-     *     "/job-application/responses/",
+     *     "/{_locale<en|ru>}/job-application/responses/",
      *     name="job_application_responses",
      *     methods="GET",
      * )

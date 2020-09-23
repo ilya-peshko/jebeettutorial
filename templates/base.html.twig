@@ -9,10 +9,11 @@
 
         {% block javascripts %}{% endblock %}
 
-        <link href="https://getbootstrap.com/docs/4.0/examples/navbars/" rel="canonical">
-        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-        <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
-        <link href="{{ asset('css/base_page.css') }}" rel="stylesheet">
+        <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/navbars/">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" >
+        <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}" >
+        <link rel="stylesheet" href="{{ asset('css/base_page.css') }}">
     </head>
     <body>
     <div class="preloader">
@@ -23,47 +24,74 @@
     </div>
     <nav class="navbar navbar-dark bg-dark margin-bottom">
         <a class="navbar-brand" href="{{ path('job_list') }}">Jobeet</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample01" aria-controls="navbarsExample01" aria-expanded="false" aria-label="Toggle navigation">
+        <a class="nav-link dropdown-toggle"
+           id="language_switcher"
+           data-toggle="dropdown"
+           aria-haspopup="true"
+           aria-expanded="false">
+            <i class="fa fa-globe"></i>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="language_switcher">
+            <a class="dropdown-item"
+               href="{{ path(app.request.attributes.get('_route'),
+                   app.request.attributes.get('_route_params')|merge({'_locale': 'ru'})) }}">
+                <span class=""></span>
+                Русский
+            </a>
+            <a class="dropdown-item"
+               href="{{ path(app.request.attributes.get('_route'),
+                   app.request.attributes.get('_route_params')|merge({'_locale': 'en'})) }}">
+                <span class=""></span>
+                English
+            </a>
+        </div>
+        <button class="navbar-toggler"
+                type="button"
+                data-toggle="collapse"
+                data-target="#navbarsExample01"
+                aria-controls="navbarsExample01"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarsExample01">
             <ul class="navbar-nav mr-auto">
                 {% if app.user and app.user.role('ROLE_EMPLOYER') %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('company_show') }}">My company</a>
+                        <a class="nav-link" href="{{ path('company_show') }}">{{ 'my.company'|trans }}</a>
                     </li>
                     {% if app.user.company|length %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path('job_application_responses') }}">My responses</a>
+                            <a class="nav-link" href="{{ path('job_application_responses') }}">{{ 'my.responses'|trans }}</a>
                         </li>
                     {% endif %}
                 {% endif %}
 
                 {% if app.user and app.user.role('ROLE_APPLICANT') %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('resume_list') }}">My resumes</a>
+                        <a class="nav-link" href="{{ path('resume_list') }}">{{ 'my.resumes'|trans }}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('job_application_list') }}">My responses</a>
+                        <a class="nav-link" href="{{ path('job_application_list') }}">{{ 'my.responses'|trans }}</a>
                     </li>
                 {% endif %}
                 {% if app.user %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('stripe_subscription') }}">Subscriptions</a>
+                        <a class="nav-link" href="{{ path('stripe_subscription') }}">{{ 'subscriptions'|trans }}</a>
                     </li>
-                    <span class="navbar-brand">User: {{ app.user.username }}</span>
-                    <span class="navbar-brand">Role: {{ app.user.meta }}</span>
+                    <span class="navbar-brand">{{ 'user'|trans }}: {{ app.user.username }}</span>
+                    <span class="navbar-brand">{{ 'role'|trans }}: {{ app.user.meta }}</span>
                     {% if app.user and app.user.role('ROLE_ADMIN') %}
                         <li class="nav-item float-right">
                             <a href="{{ path('admin') }}" class="btn btn-primary navbar-btn">Admin panel</a>
                         </li>
                     {% endif %}
                     <li class="nav-item">
-                        <a href="{{ path('app_logout') }}" style="padding: 0 5px 0 5px" class="btn btn-info nav-link float-left">Log out</a>
+                        <a href="{{ path('app_logout') }}" style="padding: 0 5px 0 5px" class="btn btn-info nav-link float-left">{{ 'log.out'|trans }}</a>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a href="{{ path('app_login') }}" style="padding: 0 5px 0 5px" class="btn btn-info nav-link float-left">Log in</a>
+                        <a href="{{ path('app_login') }}" style="padding: 0 5px 0 5px" class="btn btn-info nav-link float-left">{{ 'log.in'|trans }}</a>
                     </li>
                 {% endif %}
             </ul>

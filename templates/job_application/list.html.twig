@@ -2,15 +2,13 @@
 
 {% block body %}
 
-
-
     {% if jobApplications|length %}
         {% include 'job_application/table.html.twig' with {
             'jobApplications': jobApplications
         } only %}
     {% else %}
         <h4>
-            No active job applications.
+            {{ 'no.active.job.applications'|trans }}.
         </h4>
     {% endif %}
 

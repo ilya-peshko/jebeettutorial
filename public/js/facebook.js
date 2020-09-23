@@ -1,5 +1,5 @@
 class Facebook {
-    constructor(appId)
+    constructor(appId, userFacebookId)
     {
         let name = document.getElementById('resume_name');
         let lastName = document.getElementById('resume_surname');
@@ -18,7 +18,7 @@ class Facebook {
             });
 
             FB.getLoginStatus(function (response) {
-                if (response.status === 'connected') {
+                if (response.status === 'connected' && userFacebookId === response.authResponse.userID) {
                     var accessToken = response.authResponse.accessToken;
                     sendData(accessToken, response.authResponse.userID);
                 }
@@ -51,7 +51,7 @@ class Facebook {
                     if (result.hometown!== undefined) {
                         city.value = result.hometown;
                     }
-                    if (result.gender === 'male') {
+                    if (result.gender!== undefined && result.gender === 'male') {
                         gender.value = 'Male';
                     } else {
                         gender.value = 'Female';

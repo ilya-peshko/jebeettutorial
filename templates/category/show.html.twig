@@ -1,9 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}
-    Jobs in the {{ category.name }} category
-{% endblock %}
-
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('css/search_form.css') }}">
     <link rel="stylesheet" href="{{ asset('css/preloader.css') }}">
@@ -23,9 +19,14 @@
 
     {% include 'job/_job_history.html.twig' with {'historyJobs': historyJobs} only %}
     <div class="width-300 mt-2">
-        <input id="search-input" class="form-control form-control-sm w-75 float-left" type="text" placeholder="Search"
+        <input id="search-input"
+               class="form-control form-control-sm w-75 float-left"
+               type="text"
+               placeholder="{{ 'search'|trans }}"
                aria-label="Search">
-        <button type="submit" class="btn p-1" id="search"><i class="fa fa-search" aria-hidden="true"></i></button>
+        <button type="submit" class="btn p-1" id="search">
+            <i class="fa fa-search" aria-hidden="true"></i>
+        </button>
     </div>
     <div id="active-jobs-by-category" class=""></div>
 

@@ -37,7 +37,9 @@ class ResumeRepository extends ServiceEntityRepository
                 ->orWhere('r.name LIKE :request')
                 ->orWhere('r.surname LIKE :request')
                 ->orWhere('r.aboutMe LIKE :request')
-                ->setParameter('request', "%$request%");
+                ->andWhere('r.user = :applicant')
+                ->setParameter('request', "%$request%")
+                ->setParameter('applicant', $user);
         }
 
         return $resumes->getQuery()

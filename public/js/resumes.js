@@ -1,5 +1,5 @@
 class Resumes {
-    constructor(userId)
+    constructor(userId, locale)
     {
         const getQueryParams = ( params, url ) => {
             let href = url;
@@ -28,7 +28,7 @@ class Resumes {
         {
             $(document).ready(function () {
                 $.ajax({
-                    url: '/api/user/'+userId+'/resume/list?page='+page+'&query='+searchQuery,
+                    url: '/'+locale+'/api/user/'+userId+'/resume/list?page='+page+'&query='+searchQuery,
                     type: 'GET',
                     dataType: 'html',
                     async: true,

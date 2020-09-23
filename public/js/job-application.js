@@ -1,5 +1,5 @@
 class JobApplication {
-    constructor(userId)
+    constructor(userId, locale)
     {
         this.init = () => {
             getJobApplications();
@@ -9,7 +9,7 @@ class JobApplication {
         {
             $(document).ready(function () {
                 $.ajax({
-                    url: '/api/user/'+userId+'/job-application/responses?page='+page,
+                    url: '/'+locale+'/api/user/'+userId+'/job-application/responses?page='+page,
                     type: 'GET',
                     dataType: 'html',
                     async: true,

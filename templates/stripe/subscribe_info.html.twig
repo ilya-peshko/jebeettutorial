@@ -8,30 +8,31 @@
 {% block body %}
     <div class="form-style subscribe-form pb-5">
         <form id="subscription-info-form">
-            <h1 class="subscribe-title mb-3">Subscribe info</h1>
-            <p>Period: {{ subInfo.startDate|date("d/m/Y") }} - {{ subInfo.endDate|date("d/m/Y") }}</p>
-            <p>Plan: {{ subInfo.product }}</p>
+            <h1 class="subscribe-title mb-3">{{ 'subscribe.info'|trans }}</h1>
+            <p>{{ 'period'|trans }}: {{ subInfo.startDate|date("d/m/Y") }} - {{ subInfo.endDate|date("d/m/Y") }}</p>
+            <p>{{ 'plan'|trans }}: {{ subInfo.product|trans }}</p>
             <input id="cancel-subscription"
                    class="btn btn-primary float-right trigger-subscription"
                    type="submit"
-                   value="Unsubscribe">
+                   value="{{ 'unsubscribe'|trans }}">
 
             <div class="modal-subscription">
                 <div class="modal-subscription-content">
                     <span class="close-subscription-button">&times;</span>
-                    <h1>Subscription</h1>
+                    <h1>{{ 'subscription'|trans }}</h1>
                     <h3 id="modal-text">
-                        Unsubscribing! Please wait...
+                        {{ 'cancellation.subscription'|trans }}! {{ 'please.wait'|trans }}...
                     </h3>
                     <img src="{{ asset('images/modal-loader.gif') }}" id="modal-loader" alt="">
                 </div>
             </div>
         </form>
+        <script src="{{ path('translation') }}"></script>
         <script src="https://js.stripe.com/v3/"></script>
         <script src="{{ asset('js/stripe-cancel.js') }}"></script>
         <script type = "text/javascript">
-            let stripe = new StripeCancel('{{ stripeCustomerId }}', '{{ stripeSubscriptionId }}');
-            stripe.init();
+            let cancel =  new StripeCancel('{{ stripeCustomerId }}', '{{ stripeSubscriptionId }}');
+            cancel.init();
         </script>
     </div>
 {% endblock %}

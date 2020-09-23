@@ -1,5 +1,5 @@
 class StripeSubscribe {
-    constructor(pk_key, customerId)
+    constructor(pk_key, customerId, locale)
     {
         this.init = () => {
             let modal = document.querySelector(".modal-subscription");
@@ -8,7 +8,7 @@ class StripeSubscribe {
             let modalLoader = document.getElementById('modal-loader');
             let trigger = document.querySelector(".trigger-subscription");
             let closeButton = document.querySelector(".close-subscription-button");
-            let stripe = Stripe(pk_key);
+            let stripe = Stripe(pk_key, {locale: locale});
             let elements = stripe.elements();
             let form = document.getElementById('subscription-form');
             let style = {
@@ -30,7 +30,6 @@ class StripeSubscribe {
 
             card.mount("#card-element");
             card.on('change', showCardError);
-
             function createPaymentMethod({ card, isPaymentRetry, invoiceId })
             {
                 let billingName = document.querySelector('#name').value;
@@ -150,7 +149,7 @@ class StripeSubscribe {
                                     // Show a success message to your customer.
                                     // There's a risk of the customer closing the window before the callback.
                                     // We recommend setting up webhook endpoints later in this guide.
-                                    modalText.innerHTML = "Payment status succeeded!";
+                                    modalText.innerHTML = trans['payment.succeeded']+'!';
                                     return {
                                         priceId: document.querySelector('input[name="radio"]:checked').dataset.priceId,
                                         subscription: subscription,
@@ -190,7 +189,7 @@ class StripeSubscribe {
                         'latestInvoicePaymentIntentStatus',
                         subscription.latest_invoice.payment_intent.status
                     );
-                    throw { error: { message: 'Your card was declined.' } };
+                    throw { error: { message: trans['your.card.declined']+'.' } };
                 } else {
                     return { subscription, priceId, paymentMethodId };
                 }
@@ -267,7 +266,7 @@ class StripeSubscribe {
                     // `result.subscription.items.data[0].price.product` the customer subscribed to.
                     localStorage.clear();
                     modalLoader.style.display = "none";
-                    modalText.innerHTML = "Subscription completed!";
+                    modalText.innerHTML = trans['subscription.completed']+'!';
                     setInterval(function () {
                         window.location.reload(true);
                     }, 2000);
@@ -319,6 +318,7 @@ class StripeSubscribe {
                     })
                 )
             }
+
             function toggleModal()
             {
                 modal.classList.toggle("show-modal");
@@ -336,14 +336,27 @@ class StripeSubscribe {
 
             function showModalError(event)
             {
-                if (event.error) {
-                    modalText.innerHTML = event.error.message;
+                if (event.error || typeof event === 'string') {
                     modalLoader.style.display = "none";
                     closeButton.style.visibility = 'visible';
+                    if (event.error) {
+                        modalText.innerHTML = event.error.message;
+                    } else {
+                        modalText.innerHTML = event;
+                    }
                 }
             }
 
-            trigger.addEventListener("click", toggleModal);
+            trigger.addEventListener("click", function () {
+                toggleModal();
+                if (document.querySelector('#name').value === ''
+                    || document.querySelector('input[name="radio"]:checked') === null
+                ) {
+                    let errorMessage = trans['not.all.fields.filled']+ '!';
+                    showModalError(errorMessage);
+                }
+            });
+
             closeButton.addEventListener("click", function () {
                 toggleModal();
                 modalText.innerHTML = modalTextDefault;

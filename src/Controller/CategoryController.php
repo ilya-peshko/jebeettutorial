@@ -24,7 +24,7 @@ class CategoryController extends AbstractController
      * Finds and displays a category entity.
      *
      * @Route(
-     *     "/category/{slug}/",
+     *     "/{_locale<en|ru>}/category/{slug}/",
      *     name="category_show",
      *     methods={"GET"},
      * )

@@ -23,7 +23,7 @@ class ResumeController extends AbstractController
     /**
      * List all resumes by user
      *
-     * @Route("/api/user/{id}/resume/list/", name="nelmio_api_resume", methods={"GET"})
+     * @Route("/{_locale<en|ru>}/api/user/{id}/resume/list/", name="nelmio_api_resume", methods={"GET"})
      * @SWG\Get(
      *     description="Returns resumes by user",
      *     produces={"text/html"},

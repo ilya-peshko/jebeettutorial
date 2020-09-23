@@ -25,7 +25,7 @@ class ResumeController extends AbstractController
 
     /**
      * @Route(
-     *     "/resume/list/",
+     *     "/{_locale<en|ru>}/resume/list/",
      *     name="resume_list",
      *     methods={"GET"},
      * )
@@ -45,7 +45,7 @@ class ResumeController extends AbstractController
     }
 
     /**
-     * @Route("/resume/create", name="resume_create", methods={"GET", "POST"})
+     * @Route("/{_locale<en|ru>}/resume/create", name="resume_create", methods={"GET", "POST"})
      * @param Request $request
      * @param EntityManagerInterface $em
      * @IsGranted("ROLE_APPLICANT")
@@ -84,7 +84,7 @@ class ResumeController extends AbstractController
     }
 
     /**
-     * @Route("resume/{id}", name="resume_show", methods="GET", requirements={"id" = "\d+"})
+     * @Route("/{_locale<en|ru>}/resume/{id}", name="resume_show", methods="GET", requirements={"id" = "\d+"})
      *
      * @Entity("resume", expr="repository.find(id)")
      *
@@ -158,7 +158,7 @@ class ResumeController extends AbstractController
     }
 
     /**
-     * @Route("/resume/{id}/edit", name="resume_edit", methods={"GET", "POST"})
+     * @Route("/{_locale<en|ru>}/resume/{id}/edit", name="resume_edit", methods={"GET", "POST"})
      *
      * @param Request $request
      * @param Resume $resume
@@ -189,7 +189,7 @@ class ResumeController extends AbstractController
     }
 
     /**
-     * @Route("/job/{id}/resume/choise", name="resume_choice")
+     * @Route("/{_locale<en|ru>}/job/{id}/resume/choise", name="resume_choice")
      * @param Request $request
      * @IsGranted("ROLE_APPLICANT")
      *

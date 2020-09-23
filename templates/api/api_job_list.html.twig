@@ -2,7 +2,9 @@
 
     {% for category in categories %}
         <h4>
-            <a class="text-decoration-none" href="{{ path('category_show', {slug: category.slug}) }}">{{ category.name }}</a>
+            <a class="text-decoration-none" href="{{ path('category_show', {slug: category.slug}) }}">
+                {{ category.name|trans({}, 'messages') }}
+            </a>
         </h4>
         {% include 'job/table.html.twig' with {
             'jobs': category.activeJobs|slice(0, max_items_on_page)

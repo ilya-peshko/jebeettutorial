@@ -1,11 +1,14 @@
 {% extends 'base.html.twig' %}
+
 {% block body %}
+
     {% block stylesheets %}
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     {% endblock %}
+
     {% if company|length %}
-        <h1>Company</h1>
+        <h1>{{ 'Company'|trans }}</h1>
         <div class="media" style="margin-top: 60px;">
             {% if company.imageName %}
                 <div class="media-left">
@@ -18,16 +21,21 @@
             <div class="media-body">
                 <div class="row">
                     <div class="col-sm-10">
-                        <h3 class="media-heading"><strong>{{ company.name }}</strong> <i>({{ company.address }})</i></h3>
+                        <h3 class="media-heading">
+                            <strong>{{ company.name }}</strong>
+                            <i>({{ company.address }})</i>
+                        </h3>
                     </div>
                 </div>
             </div>
         </div>
+
         {% if app.user and (app.user is same as(company.user)) %}
             {% include 'company/control_panel.html.twig' with {
                 'company': company,
             } only %}
         {% endif %}
+
         <script src = "{{ asset('js/company.js') }}"></script>
         <script type="text/javascript">
             let company = new Company('{{ app.user.company.id }}');
@@ -35,9 +43,9 @@
         </script>
     {% else %}
         <h4>
-            You have no company.
+            {{ 'you.have.no.company'|trans }}.
             {% if app.user and app.user.role('ROLE_EMPLOYER') %}
-                <a href="{{ path('company_create') }}">Create a company.</a>
+                <a href="{{ path('company_create') }}">{{ 'create.company'|trans }}.</a>
             {% endif %}
         </h4>
     {% endif %}

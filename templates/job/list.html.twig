@@ -9,7 +9,7 @@
     <script src = "https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src = "{{ asset('js/jobs.js') }}"></script>
     <script type="text/javascript">
-        let jobs = new Jobs();
+        let jobs = new Jobs('{{ app.request.locale }}');
         jobs.init();
     </script>
 {% endblock %}
@@ -21,7 +21,7 @@
             {% for newVacancy in newVacancies %}
                 <div class="mySlides fade-slider">
                     <div class="text">
-                        {{ newVacancy.category }}:
+                        {{ newVacancy.category|trans }}:
                         <a class="text-decoration-none" href="{{ path('job_show',{id:newVacancy.id}) }}">
                             {{ newVacancy.title }}
                         </a>
@@ -42,13 +42,11 @@
             <br>
 
     {% endif %}
-
     {% include 'job/_job_history.html.twig' with {'historyJobs': historyJobs} only %}
-{#    <img src="{{ asset('images/ajax-loader.gif') }}" class="loader mx-auto" alt="">#}
     <div id="activejob-list"></div>
 
     {% if app.user and app.user.role('ROLE_EMPLOYER') and app.user.company %}
-        <a href="{{ path('job_create') }}" class="btn btn-primary navbar-btn float-right">Post a Job</a>
+        <a href="{{ path('job_create') }}" class="btn btn-primary navbar-btn float-right">{{ 'post.job'|trans }}</a>
     {% endif %}
     <script src = "{{ asset('js/slider.js') }}"></script>
 {% endblock %}

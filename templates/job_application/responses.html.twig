@@ -9,7 +9,7 @@
     <script src = "https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src = "{{ asset('js/job-application.js') }}"></script>
     <script type="text/javascript">
-        let job_application = new JobApplication({{ app.user.id }});
+        let job_application = new JobApplication({{ app.user.id }},'{{ app.request.locale }}');
         job_application.init();
     </script>
 

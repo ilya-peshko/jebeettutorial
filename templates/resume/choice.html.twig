@@ -14,10 +14,13 @@
         } only %}
     {% else %}
         <h4>
-            Need to create resume.
+            {{ 'need.create.resume'|trans }}.
         </h4>
     {% endif %}
 
-    <a href="{{ path('resume_create') }}" class="btn btn-default float-right">Add resume</a>
+    <a href="{{ path('resume_create') }}"
+       class="btn btn-default float-right">
+        {{ 'add.resume'|trans }}
+    </a>
 
 {% endblock %}

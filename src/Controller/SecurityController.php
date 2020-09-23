@@ -10,15 +10,15 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class SecurityController extends AbstractController
 {
     /**
-     * @Route("/login", name="app_login")
+     * @Route("/{_locale<en|ru>}/login", name="app_login")
      * @param AuthenticationUtils $authenticationUtils
      * @return Response
      */
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-         if ($this->getUser()) {
-             return $this->redirectToRoute('job_list');
-         }
+        if ($this->getUser()) {
+            return $this->redirectToRoute('job_list');
+        }
 
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();

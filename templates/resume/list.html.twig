@@ -10,19 +10,22 @@
     <script src = "https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src = "{{ asset('js/resumes.js') }}"></script>
     <script type = "text/javascript">
-        let resumes = new Resumes({{ app.user.id }});
+        let resumes = new Resumes({{ app.user.id }},'{{ app.request.locale }}');
         resumes.init();
     </script>
 {% endblock %}
 
 {% block body %}
     <div class="width-300 mt-2">
-        <input id="resume-search" class="form-control form-control-sm w-75 float-left" type="search" placeholder="Search"
+        <input id="resume-search"
+               class="form-control form-control-sm w-75 float-left"
+               type="search"
+               placeholder="{{ 'search'|trans }}"
                aria-label="Search">
         <button id="search" type="submit" class="btn p-1" ><i class="fa fa-search" aria-hidden="true"></i></button>
     </div>
     <div class="resume-wrapper mb-5">
         <div id="resumes"></div>
     </div>
-    <a href="{{ path('resume_create') }}" class="btn btn-default float-right">Add resume</a>
+    <a href="{{ path('resume_create') }}" class="btn btn-default float-right">{{ 'add.resume'|trans }}</a>
 {% endblock %}

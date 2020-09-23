@@ -40,7 +40,7 @@ class StripeCancel{
 
             function cancelInfo()
             {
-                modalText.innerHTML = "Cancel succeeded!";
+                modalText.innerHTML = trans['cancel.succeeded']+'!';
                 modalLoader.style.display = "none";
             }
 
