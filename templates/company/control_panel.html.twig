@@ -1,18 +1,32 @@
 <nav class="navbar navbar-light float-right">
     <form class="form-inline float-right">
-        <a href="{{ path('company_delete', {id:company.id}) }}" class="ml-2">
-            <button id="delete-company"
-                    type="submit"
-                    class="btn btn-outline-danger"
-                    onclick="return confirm('Are you sure?')">
-                <span class="fa fa-trash" aria-hidden="true"></span>
-                {{ 'delete'|trans }}
-            </button>
-        </a>
-        <a class="btn btn-outline-info navbar-btn ml-2"
-           href="{{ path('company_edit', {'id': company.id}) }}">
-            <span class="fa fa-pencil" aria-hidden="true"></span>
-            {{ 'edit'|trans }}
-        </a>
+        {% if app.user and (app.user is same as(company.user)) %}
+            <a href="{{ path('company_delete', {id:company.id}) }}" class="ml-2">
+                <button id="delete-company"
+                        type="submit"
+                        class="btn btn-outline-danger"
+                        onclick="return confirm('Are you sure?')">
+                    <span class="fa fa-trash" aria-hidden="true"></span>
+                    {{ 'delete'|trans }}
+                </button>
+            </a>
+            <a class="btn btn-outline-info ml-2"
+               href="{{ path('company_edit', {'id': company.id}) }}">
+                <span class="fa fa-pencil" aria-hidden="true"></span>
+                {{ 'edit'|trans }}
+            </a>
+                <a class="btn btn-outline-info ml-2 float-right"
+                   href="{{ path('company_chats', {id: company.id}) }}">
+                    <span class="fa fa-plus" aria-hidden="true"></span>
+                    {{ 'chats'|trans }}
+                </a>
+        {% endif %}
+        {% if app.user.role('ROLE_APPLICANT') %}
+            <a class="btn btn-outline-info ml-2 float-right"
+               href="{{ path('company_chat', {id: company.id, room: app.user.uuid}) }}">
+                <span class="fa fa-plus" aria-hidden="true"></span>
+                {{ 'chat'|trans }}
+            </a>
+        {% endif %}
     </form>
 </nav>

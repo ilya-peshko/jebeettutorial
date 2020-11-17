@@ -10,13 +10,17 @@
             {{ form_end(deleteForm) }}
             <a class="btn navbar-btn ml-2" href="{{ path('job_edit', {'id': job.id}) }}">
                 <span class="fa fa-pencil" aria-hidden="true"></span>
-                Edit
+                {{ 'edit'|trans }}
             </a>
         {% endif %}
         {% if app.user and app.user.role('ROLE_APPLICANT')%}
             <a class="btn btn-default navbar-btn ml-2" href="{{ path('resume_choice', {id:job.id}) }}">
                 <span class="fa fa-check" aria-hidden="true"></span>
-                Response
+                {{ 'response'|trans }}
+            </a>
+            <a class="btn btn-default navbar-btn ml-2" href="{{ path('company_show', {id:job.company.id}) }}">
+                <span class="fa fa-home" aria-hidden="true"></span>
+                {{ 'show.company'|trans }}
             </a>
             {% if app.user and app.user.facebookId %}
                 <button id="facebook-post" type="button" class="btn btn-outline-dark" onclick="return confirm('Are you sure?')">

@@ -3,9 +3,13 @@
 namespace App\Entity\User;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Entity\Chat;
 use App\Entity\Stripe;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -27,8 +31,8 @@ class User implements UserInterface
     /**
      * @var int
      *
-     * @ORM\Column(type="integer")
      * @ORM\Id
+     * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      * @Groups({"user", "company", "resume"})
      */
@@ -113,12 +117,25 @@ class User implements UserInterface
     private $stripe;
 
     /**
+     * @ORM\OneToMany(targetEntity=Chat::class, mappedBy="user")
+     */
+    private $chats;
+
+    /**
+     * @var UuidInterface
+     *
+     * @ORM\Column(name="uuid", type="string")
+     */
+    private $uuid;
+
+    /**
      * User constructor.
      */
     public function __construct()
     {
         $this->enabled = false;
         $this->roles   = [];
+        $this->chats = new ArrayCollection();
     }
 
     /**
@@ -403,6 +420,64 @@ class User implements UserInterface
     {
         $this->stripe = $stripe;
 
+        return $this;
+    }
+
+    /**
+     * @return Collection|Chat[]
+     */
+    public function getChats(): Collection
+    {
+        return $this->chats;
+    }
+
+    /**
+     * @param Chat $chat
+     * @return $this
+     */
+    public function addChat(Chat $chat): self
+    {
+        if (!$this->chats->contains($chat)) {
+            $this->chats[] = $chat;
+            $chat->setUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Chat $chat
+     * @return $this
+     */
+    public function removeChat(Chat $chat): self
+    {
+        if ($this->chats->contains($chat)) {
+            $this->chats->removeElement($chat);
+            // set the owning side to null (unless already changed)
+            if ($chat->getUser() === $this) {
+                $chat->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function getUuid()
+    {
+        return $this->uuid;
+    }
+
+    /**
+     * @param UuidInterface $uuid
+     * @return $this
+     */
+    public function setUuid($uuid): User
+    {
+        $this->uuid = $uuid;
         return $this;
     }
 }

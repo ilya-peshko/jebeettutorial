@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" type='text/css' href="{{ asset('css/form.css') }}">
+{% endblock %}
+
+{% block body %}
+        <div class="form-style">
+            <h1>{{ 'active.chats'|trans }}</h1>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    {% for chat in chats %}
+                        <p>
+                            <a href="{{ path('company_chat', {id:app.user.company.id, uuid: chat.uuid}) }}">
+                                {{ chat.username }}
+                            </a>
+                        </p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+{% endblock %}

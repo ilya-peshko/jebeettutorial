@@ -12,13 +12,13 @@
     {% for jobApplication in jobApplications %}
         <tr>
             <td>
-                <a href="{{ path('resume_show', {id:jobApplication.resume.id}) }}">
+                <a href="{{ path('resume_show', { id:jobApplication.resume.id }) }}">
                     {{ jobApplication.resume.title }}
                 </a>
             </td>
             <td>{{ jobApplication.job.description }}</td>
             <td>
-                <a href="{{ path('company_show', {id:jobApplication.job.company.id}) }}">
+                <a href="{{ path('company_show', { id:jobApplication.job.company.id }) }}">
                     {{ jobApplication.job.company.name }}
                 </a>
             </td>

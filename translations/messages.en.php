@@ -11,6 +11,7 @@ return [
     'no.act.jobs'      => 'No active jobs',
     'my.responses'     => 'My responses',
     'no.responses'     => 'No responses',
+    'response'         => 'Response',
     'my.resumes'       => 'My resumes',
     'subscriptions'    => 'Subscriptions',
     'subscription'     => 'Subscription',
@@ -50,6 +51,10 @@ return [
     'unsubscribe'      => 'Unsubscribe',
     'subscribe.info'   => 'Subscribe info',
     'cancel.succeeded' => 'Cancel succeeded',
+    'chat'             => 'Chat',
+    'chats'            => 'Chats',
+    'active.chats'     => 'Active chats',
+    'show.company'     => 'Show company',
 
     'cancellation.subscription'  => 'Cancellation of subscription',
     'you.have.no.company'        => 'You have no company',

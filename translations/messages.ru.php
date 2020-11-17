@@ -11,6 +11,7 @@ return [
     'no.act.jobs'      => 'Нет активных вакансий',
     'my.responses'     => 'Мои отклики',
     'no.responses'     => 'Нет откликов',
+    'response'         => 'Откликнуться',
     'my.resumes'       => 'Мои резюме',
     'subscriptions'    => 'Подписки',
     'subscription'     => 'Подписка',
@@ -50,6 +51,10 @@ return [
     'unsubscribe'      => 'Отписаться',
     'subscribe.info'   => 'Информация о подписке',
     'cancel.succeeded' => 'Отмена подписки успешна',
+    'chat'             => 'Чат',
+    'chats'            => 'Чаты',
+    'active.chats'     => 'Активные чаты',
+    'show.company'     => 'Показать компанию',
 
     'cancellation.subscription'  => 'Отмена подписки',
     'you.have.no.company'        => 'У вас нет компании',

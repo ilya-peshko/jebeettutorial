@@ -7,6 +7,7 @@ use App\Entity\User\User;
 use App\Form\RegistrationFormType;
 use App\Security\EmailVerifier;
 use App\Security\LoginFormAuthenticator;
+use Ramsey\Uuid\Uuid;
 use Stripe\Exception\ApiErrorException;
 use Stripe\StripeClient;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -64,9 +65,9 @@ class RegistrationController extends AbstractController
                     $user,
                     $form->get('plainPassword')->getData()
                 )
-            );
-            $user->setEnabled(true);
-
+            )
+                ->setEnabled(true)
+                ->setUuid(Uuid::uuid4());
 
             $stripe = new StripeClient($this->getParameter('stripe_secret_key'));
             $stripeCustomer = $stripe->customers->create([
@@ -74,7 +75,7 @@ class RegistrationController extends AbstractController
                 'description' => $user->getUsername()
             ]);
 
-            $stripeEntity->setUser($user)->setStripeCustomerId($stripeCustomer->id);
+            $stripeEntity->setUser($user);
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);

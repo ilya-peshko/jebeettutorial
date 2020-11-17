@@ -8,7 +8,7 @@
     {% endblock %}
 
     {% if company|length %}
-        <h1>{{ 'Company'|trans }}</h1>
+        <h1>{{ 'company'|trans }}</h1>
         <div class="media" style="margin-top: 60px;">
             {% if company.imageName %}
                 <div class="media-left">
@@ -30,15 +30,13 @@
             </div>
         </div>
 
-        {% if app.user and (app.user is same as(company.user)) %}
-            {% include 'company/control_panel.html.twig' with {
-                'company': company,
-            } only %}
-        {% endif %}
+        {% include 'company/control_panel.html.twig' with {
+            'company': company,
+        } only %}
 
         <script src = "{{ asset('js/company.js') }}"></script>
         <script type="text/javascript">
-            let company = new Company('{{ app.user.company.id }}');
+            let company = new Company('{{ company.id }}');
             company.init();
         </script>
     {% else %}

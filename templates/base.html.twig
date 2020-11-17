@@ -58,7 +58,7 @@
             <ul class="navbar-nav mr-auto">
                 {% if app.user and app.user.role('ROLE_EMPLOYER') %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('company_show') }}">{{ 'my.company'|trans }}</a>
+                        <a class="nav-link" href="{{ path('company_show', {id: app.user.company.id}) }}">{{ 'my.company'|trans }}</a>
                     </li>
                     {% if app.user.company|length %}
                         <li class="nav-item">

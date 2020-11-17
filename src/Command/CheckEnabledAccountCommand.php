@@ -19,7 +19,6 @@ class CheckEnabledAccountCommand extends Command
     private $mailer;
     protected static $defaultName = 'app:check-enabled-account';
 
-
     /**
      *
      * @param EntityManagerInterface $em
