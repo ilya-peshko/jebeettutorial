@@ -15,8 +15,16 @@ use Ratchet\ConnectionInterface;
  */
 class Chat implements MessageComponentInterface
 {
+    /**
+     * @var \SplObjectStorage
+     */
     protected $clients;
+
+    /**
+     * @var array
+     */
     private $userInfo;
+
     /**
      * @var EntityManagerInterface
      */
@@ -34,8 +42,8 @@ class Chat implements MessageComponentInterface
     /**
      * Chat constructor.
      * @param EntityManagerInterface $em
-     * @param UserRepository $userRepository
-     * @param ChatRepository $chatRepository
+     * @param UserRepository         $userRepository
+     * @param ChatRepository         $chatRepository
      */
     public function __construct(
         EntityManagerInterface $em,
@@ -53,19 +61,36 @@ class Chat implements MessageComponentInterface
     {
         // Store the new connection to send messages to later
         $this->clients->attach($conn);
-
+        $count = count($this->clients);
         echo "New connection! ({$conn->resourceId})\n";
+        echo "Count connections: {$count}\n";
     }
 
     function onMessage(ConnectionInterface $from, $msg): void
     {
-        $data = json_decode($msg, false);
+        $numRecv = count($this->clients) - 1;
+        echo sprintf(
+            'Connection %d sending message "%s" to %d other connection%s' . "\n",
+            $from->resourceId,
+            $msg,
+            $numRecv,
+            $numRecv === 1 ? '' : 's'
+        );
 
-        if (property_exists($data, 'connectedUserId')) {
-            $this->userInfo[$data->connectedUserId] = $from->resourceId;
+        foreach ($this->clients as $client) {
+            if ($from !== $client) {
+                // The sender is not the receiver, send to each client connected
+                $client->send($msg);
+            }
         }
 
-        if (property_exists($data, 'to')) {
+//        $data = json_decode($msg, false);
+//
+//        if (property_exists($data, 'connectedUserId')) {
+//            $this->userInfo[$data->connectedUserId] = $from->resourceId;
+//        }
+//        echo "Message sanded\n";
+//        if (property_exists($data, 'to')) {
 //            /** @var User $user */
 //            $user = $this->userRepository->find($data->userId);
 //
@@ -75,15 +100,15 @@ class Chat implements MessageComponentInterface
 //                ->setUserTo($data->to)
 //                ->setSendDate(new \DateTime());
 //            $user->addChat($chat);
-
-            if (array_key_exists($data->to, $this->userInfo)) {
-                foreach ($this->clients as $client) {
+//
+//            if (array_key_exists($data->to, $this->userInfo)) {
+//                foreach ($this->clients as $client) {
 //                    if ($client->resourceId === $this->userInfo[$data->to]) {
-                        $client->send($msg);
+//                        $client->send($msg);
 //                        $chat->setViewed(true);
-                }
-            }
-        }
+//                }
+//            }
+//      }
 
 //            $this->em->persist($user);
 //            $this->em->persist($chat);

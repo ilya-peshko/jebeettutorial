@@ -129,6 +129,7 @@ class CompanyController extends BaseController
      * @IsGranted("ROLE_EMPLOYER")
      *
      * @return Response
+     * @throws NonUniqueResultException
      */
     public function edit(Request $request, EntityManagerInterface $em): Response
     {
@@ -181,29 +182,37 @@ class CompanyController extends BaseController
      * @Route("/{_locale<en|ru>}/company/{id}/chat/{room}", name="company_chat", methods={"GET", "POST"})
      * @Entity("company", expr="repository.find(id)")
      *
-     * @param Company $company
-     * @param Request $request
+     * @param Company                $company
+     * @param Request                $request
      * @param EntityManagerInterface $em
-     * @param $room
+     * @param string                 $room Room.
      *
      * @return Response
      */
-    public function chating(Company $company, Request $request, $room, EntityManagerInterface $em): Response
+    public function chating(Company $company, Request $request, string $room, EntityManagerInterface $em): Response
     {
-        $applicant = $this->userRepository->findOneBy(['uuid' => $room]);
+        /** @var User $user */
+        $user = $this->getUser();
 
         /** @var Chat $messages */
-        $messages = $this->chatRepository->getMessagesByUsersId(
-            [
-                $company->getUser()->getId(),
-                $applicant->getId()
-            ]
-        );
+        $messages = $this->chatRepository->getMessagesByRoom($room);
+
+        if ($messages) {
+            $companionMessages = $this->chatRepository->getCompanionMessagesInRoom($room, $user);
+            $userMessages      = $this->chatRepository->getUserMessagesInRoom($room, $user);
+
+            return $this->render('company/chat.html.twig', [
+                'company'           => $company,
+                'messages'          => $messages,
+                'companionMessages' => $companionMessages,
+                'userMessages'      => $userMessages,
+                'room'              => $room,
+            ]);
+        }
 
         return $this->render('company/chat.html.twig', [
-            'company'   => $company,
-            'applicant' => $applicant,
-            'messages'  => $messages
+            'company'           => $company,
+            'room'              => $room,
         ]);
     }
 
@@ -218,7 +227,7 @@ class CompanyController extends BaseController
      */
     public function chats(Company $company, Request $request): Response
     {
-        $chats = $this->chatRepository->getUniqueChatsByEmployer($company->getUser()->getId());
+        $chats = $this->chatRepository->getUniqueChatsByEmployer($company->getUser());
 
         return $this->render('company/chats.html.twig', [
             'company' => $company,

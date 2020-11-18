@@ -23,7 +23,7 @@
         {% endif %}
         {% if app.user.role('ROLE_APPLICANT') %}
             <a class="btn btn-outline-info ml-2 float-right"
-               href="{{ path('company_chat', {id: company.id, room: app.user.uuid}) }}">
+               href="{{ path('company_chat', {id: company.id, room: room}) }}">
                 <span class="fa fa-plus" aria-hidden="true"></span>
                 {{ 'chat'|trans }}
             </a>

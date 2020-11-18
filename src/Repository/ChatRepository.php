@@ -23,33 +23,46 @@ class ChatRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Int $id
+     * @param User $user
      *
      * @return array
      */
-    public function getUniqueChatsByEmployer(Int $id): array
+    public function getUniqueChatsByEmployer(User $user): array
     {
-        return $this->createQueryBuilder('chat')
-            ->select('user.id, user.uuid, user.username')
-            ->innerJoin('chat.userFrom', 'user')
+        $rooms = $this->createQueryBuilder('chat')
+            ->select('chat.room')
+            ->where('chat.user = :user')
+            ->setParameter('user', $user)
             ->distinct()
-            ->where('chat.userTo = :id')
-            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult();
+
+        $arrayRooms = [];
+        foreach ($rooms as $room) {
+            $arrayRooms[]= $room['room'];
+        }
+        $rooms = implode(',', $arrayRooms);
+
+        return $this->createQueryBuilder('chat')
+            ->where('chat.user != :user')
+            ->andWhere('chat.room IN (:rooms)')
+            ->setParameter('user', $user)
+            ->setParameter('rooms', $rooms)
+            ->distinct()
             ->getQuery()
             ->getResult();
     }
 
     /**
-     * @param array $users
+     * @param User $user
      *
      * @return array
      */
-    public function getMessagesByUsersId(Array $users): array
+    public function getMessagesByUsers(User $user): array
     {
         return $this->createQueryBuilder('chat')
-            ->where('chat.userTo IN (:users)')
-            ->andWhere('chat.userFrom IN (:users)')
-            ->setParameter('users', $users)
+            ->where('chat.user = :user')
+            ->setParameter('user', $user)
             ->getQuery()
             ->getResult();
     }
@@ -74,34 +87,82 @@ class ChatRepository extends ServiceEntityRepository
     /**
      * @param User $applicant
      * @param User $employer
-     * @throws NonUniqueResultException
      *
      * @return int|mixed|string|null
+     * @throws NonUniqueResultException
      */
     public function checkRoomByUsers(User $applicant, User $employer)
     {
         $rooms = $this->createQueryBuilder('chat')
-                ->select('chat.room')
-                ->where('chat.user = :employer')
-                ->setParameter('employer', $employer);
-
-        return $this->createQueryBuilder('chat')
-            ->where('chat.user = :applicant')
-            ->andWhere('chat.room IN (:rooms)')
-            ->setParameter('applicant', $applicant)
-            ->setParameter('rooms', $rooms->getDQL())
+            ->select('chat.room')
+            ->where('chat.user = :user')
+            ->setParameter('user', $applicant)
+            ->distinct()
             ->getQuery()
-            ->getOneOrNullResult();
+            ->getResult();
+
+        $arrayRooms = [];
+        foreach ($rooms as $room) {
+            $arrayRooms[]= $room['room'];
+        }
+        $rooms = implode(',', $arrayRooms);
+
+        $rooms = $this->createQueryBuilder('chat')
+            ->where('chat.user = :user')
+            ->andWhere('chat.room IN (:rooms)')
+            ->setParameter('user', $employer)
+            ->setParameter('rooms', $rooms)
+            ->distinct()
+            ->getQuery();
+
+        return $rooms->getResult()[0];
     }
 
     /**
      * @param $room
+     *
      * @return int|mixed|string|null
      */
     public function getMessagesByRoom($room)
     {
         return $this->createQueryBuilder('chat')
             ->where('chat.room = :room')
-            ->setParameter('room', $room);
+            ->setParameter('room', $room)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param string $room Room Id
+     * @param User   $user User
+     *
+     * @return int|mixed|string|null
+     */
+    public function getUserMessagesInRoom(string $room, User $user)
+    {
+        return $this->createQueryBuilder('chat')
+            ->where('chat.room = :room')
+            ->andWhere('chat.user = :user')
+            ->setParameter('room', $room)
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param string $room Room Id
+     * @param User   $user User
+     *
+     * @return int|mixed|string|null
+     */
+    public function getCompanionMessagesInRoom(string $room, User $user)
+    {
+        return $this->createQueryBuilder('chat')
+            ->where('chat.room = :room')
+            ->andWhere('chat.user != :user')
+            ->setParameter('room', $room)
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult();
     }
 }

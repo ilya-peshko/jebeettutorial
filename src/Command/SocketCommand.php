@@ -75,7 +75,7 @@ class SocketCommand extends Command
         // Domain as first parameter
         $app = new App('localhost', 8080, '127.0.0.1');
         // Add route to chat with the handler as second parameter
-        $app->route('{_locale<en|ru>}/company/{id}/chat', new Chat(
+        $app->route('{_locale<en|ru>}/company/{id}/chat/{room}', new Chat(
             $this->em,
             $this->userRepository,
             $this->chatRepository

@@ -30,9 +30,16 @@
             </div>
         </div>
 
-        {% include 'company/control_panel.html.twig' with {
-            'company': company,
-        } only %}
+        {% if room is defined %}
+            {% include 'company/control_panel.html.twig' with {
+                'company': company,
+                'room': room,
+            } only %}
+        {% else %}
+            {% include 'company/control_panel.html.twig' with {
+                'company': company,
+            } only %}
+        {% endif %}
 
         <script src = "{{ asset('js/company.js') }}"></script>
         <script type="text/javascript">

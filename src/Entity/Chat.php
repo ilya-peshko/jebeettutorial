@@ -21,8 +21,8 @@ class Chat
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="chats", cascade={"persist"})
-     * @ORM\JoinColumn(name="user", referencedColumnName="id", nullable=true)
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="chats")
+     * @ORM\JoinColumn(name="user", referencedColumnName="id")
      */
     private $user;
 
@@ -66,9 +66,9 @@ class Chat
     }
 
     /**
-     * @return User|null
+     * @return User
      */
-    public function getUser(): ?User
+    public function getUser(): User
     {
         return $this->user;
     }
@@ -85,18 +85,19 @@ class Chat
     }
 
     /**
-     * @return UuidInterface
+     * @return string
      */
-    public function getRoom(): UuidInterface
+    public function getRoom(): string
     {
         return $this->room;
     }
 
     /**
-     * @param UuidInterface $room
+     * @param string $room
+     *
      * @return Chat
      */
-    public function setRoom(UuidInterface $room): Chat
+    public function setRoom(string $room): Chat
     {
         $this->room = $room;
         return $this;

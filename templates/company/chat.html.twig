@@ -3,37 +3,29 @@
 {% block body %}
     <h1>Private chat</h1>
     <ul id="chat-list">
-    {% for message in messages %}
-        <li>
-            <p>
-                {{ message.userFrom.username }} : {{ message.message }}
-                <br>
-                {{ message.sendDate|date('H:i:s m/d/Y') }}
-            </p>
-        </li>
-    {% endfor %}
+        {% if messages|length %}
+            {% for message in messages %}
+                <li>
+                    <p>
+                        {{ message.user.username }} : {{ message.message }}
+                        <br>
+                        {{ message.sendDate|date('H:i:s m/d/Y') }}
+                    </p>
+                </li>
+            {% endfor %}
+        {% endif %}
     </ul>
     <hr>
     <textarea id="form-message" placeholder="Your private message here"></textarea>
     <input type="button" id="form-submit" value="Send message"/>
 
     <script>
-        function sendTo() {
-            if('{{ company.user.id }}' === '{{ app.user.id }}'){
-                return '{{ applicant.id }}';
-            }else{
-                return '{{ company.user.id }}';
-            }
-        }
-
         // This object will be sent everytime you submit a message in the sendMessage function.
         var clientInformation = {
             userId: '{{ app.user.id }}',
             username: '{{ app.user.username }}',
-            to: sendTo(),
             // You can add more information in a static object
         };
-        console.log(clientInformation.username);
 
         // START SOCKET CONFIG
         /**
@@ -41,7 +33,7 @@
          * According to the configuration in Sockets/Chat.php , change the port if you need to.
          * @type WebSocket
          */
-        var conn = new WebSocket('ws://localhost:8080/en/company/' + {{ company.id }} + '/chat');
+        var conn = new WebSocket('ws://localhost:8080/en/company/' + '{{ company.id }}' + '/chat/' + '{{ room }}');
 
         conn.onopen = function(e) {
             console.info("Connection established succesfully");
@@ -69,7 +61,6 @@
                 alert("Please send something on the chat");
                 return;
             }
-
             Chat.sendMessage(msg);
             // Empty text area
             document.getElementById("form-message").value = "";
@@ -77,20 +68,31 @@
 
         // Mini API to send a message with the socket and append a message in a UL element.
         var Chat = {
-            appendMessage: function(username,message){
-                var from = username;
-
+            appendMessage: function(username, message){
+                if (!username || !message) {
+                    return;
+                }
                 // Append List Item
                 var ul = document.getElementById("chat-list");
                 var li = document.createElement("li");
-                li.appendChild(document.createTextNode(from + " : "+ message));
+                li.appendChild(document.createTextNode(username + " : "+ message));
                 ul.appendChild(li);
             },
             sendMessage: function(text){
                 clientInformation.message = text;
                 // Send info as JSON
                 conn.send(JSON.stringify(clientInformation));
-                // Add my own message to the list
+                fetch('/api/save-message', {
+                    method: 'post',
+                    headers: {
+                        'Content-type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        userId: '{{ app.user.id }}',
+                        message: clientInformation.message,
+                        room: '{{ room }}',
+                    }),
+                });
                 this.appendMessage(clientInformation.username, clientInformation.message);
             }
         };

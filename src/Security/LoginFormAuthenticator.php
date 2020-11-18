@@ -40,11 +40,11 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 
     /**
      * LoginFormAuthenticator constructor.
-     * @param EntityManagerInterface $entityManager
-     * @param UrlGeneratorInterface $urlGenerator
-     * @param CsrfTokenManagerInterface $csrfTokenManager
+     * @param EntityManagerInterface       $entityManager
+     * @param UrlGeneratorInterface        $urlGenerator
+     * @param CsrfTokenManagerInterface    $csrfTokenManager
      * @param UserPasswordEncoderInterface $passwordEncoder
-     * @param RouterInterface $router
+     * @param RouterInterface              $router
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -62,6 +62,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 
     /**
      * @param Request $request
+     *
      * @return bool
      */
     public function supports(Request $request): bool
@@ -72,6 +73,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 
     /**
      * @param Request $request
+     *
      * @return array|mixed
      */
     public function getCredentials(Request $request)
@@ -90,8 +92,9 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
     }
 
     /**
-     * @param mixed $credentials
+     * @param mixed                 $credentials
      * @param UserProviderInterface $userProvider
+     *
      * @return User|object|UserInterface|null
      */
     public function getUser($credentials, UserProviderInterface $userProvider)
@@ -112,7 +115,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
     }
 
     /**
-     * @param mixed $credentials
+     * @param mixed         $credentials
      * @param UserInterface $user
      * @return bool
      */
@@ -132,16 +135,23 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
     }
 
     /**
-     * @param Request $request
+     * @param Request        $request
      * @param TokenInterface $token
-     * @param string $providerKey
+     * @param string         $providerKey
+     *
      * @return RedirectResponse|Response|null
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-//        if (in_array('ROLE_EMPLOYER', $token->getRoleNames())) {
-//            return new RedirectResponse($this->router->generate('company_show', ['id' => $token->getUser()]));
-//        }
+        if (in_array('ROLE_EMPLOYER', $token->getRoleNames())) {
+            if ($token->getUser()->getCompany() === null) {
+                return new RedirectResponse($this->router->generate('company_create'));
+            }
+
+            return new RedirectResponse(
+                $this->router->generate('company_show', ['id' => $token->getUser()->getCompany()->getId()])
+            );
+        }
 
         if (in_array('ROLE_ADMIN', $token->getRoleNames())) {
             return new RedirectResponse($this->router->generate('admin'));
