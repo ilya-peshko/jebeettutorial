@@ -1,9 +1,13 @@
 {% extends 'base.html.twig' %}
 
+{% block javascripts %}
+    <script src = "{{ asset('js/date-format.js') }}"></script>
+{% endblock %}
+
 {% block body %}
     <h1>Private chat</h1>
     <ul id="chat-list">
-        {% if messages|length %}
+        {% if messages is defined %}
             {% for message in messages %}
                 <li>
                     <p>
@@ -37,7 +41,14 @@
 
         conn.onopen = function(e) {
             console.info("Connection established succesfully");
-            conn.send(JSON.stringify({connectedUserId : '{{ app.user.id }}'}));
+            conn.send(
+                JSON.stringify(
+                    {
+                        connectedUserId : '{{ app.user.id }}',
+                        room: '{{ room }}'
+                    }
+                )
+            );
         };
 
         conn.onmessage = function(e) {
@@ -75,7 +86,13 @@
                 // Append List Item
                 var ul = document.getElementById("chat-list");
                 var li = document.createElement("li");
-                li.appendChild(document.createTextNode(username + " : "+ message));
+                var p   = document.createElement("p");
+                var br  = document.createElement("br");
+                var dateTime = new Date();
+                p.appendChild(document.createTextNode(username + " : " + message));
+                p.appendChild(br);
+                p.appendChild(document.createTextNode(dateTime.format("HH:mm:ss mm/dd/yyyy")));
+                li.appendChild(p);
                 ul.appendChild(li);
             },
             sendMessage: function(text){
@@ -91,6 +108,7 @@
                         userId: '{{ app.user.id }}',
                         message: clientInformation.message,
                         room: '{{ room }}',
+                        company: '{{ company.id }}',
                     }),
                 });
                 this.appendMessage(clientInformation.username, clientInformation.message);

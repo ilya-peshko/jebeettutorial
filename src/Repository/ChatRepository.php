@@ -5,8 +5,6 @@ namespace App\Repository;
 use App\Entity\Chat;
 use App\Entity\User\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\AbstractQuery;
-use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -39,15 +37,16 @@ class ChatRepository extends ServiceEntityRepository
 
         $arrayRooms = [];
         foreach ($rooms as $room) {
-            $arrayRooms[]= $room['room'];
+            $arrayRooms[]= (string)($room['room']);
         }
-        $rooms = implode(',', $arrayRooms);
 
         return $this->createQueryBuilder('chat')
+            ->select(['chat.room', 'u.username'])
             ->where('chat.user != :user')
             ->andWhere('chat.room IN (:rooms)')
             ->setParameter('user', $user)
-            ->setParameter('rooms', $rooms)
+            ->setParameter('rooms', $arrayRooms)
+            ->innerJoin('chat.user', 'u')
             ->distinct()
             ->getQuery()
             ->getResult();
@@ -58,7 +57,7 @@ class ChatRepository extends ServiceEntityRepository
      *
      * @return array
      */
-    public function getMessagesByUsers(User $user): array
+    public function getMessagesByUser(User $user): array
     {
         return $this->createQueryBuilder('chat')
             ->where('chat.user = :user')
@@ -68,18 +67,19 @@ class ChatRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param $userToId
-     * @param User $userFrom
+     * @param string$room
+     * @param User $user
+     *
      * @return int|mixed|string
      */
-    public function getNotViewedMessagesByUsers($userToId, User $userFrom)
+    public function getNotViewedMessagesByUsers(string $room, User $user)
     {
         return $this->createQueryBuilder('chat')
-            ->where('chat.userTo = :id')
+            ->where('chat.user != :user')
             ->andWhere('chat.viewed = 0')
-            ->andWhere('chat.userFrom = :user')
-            ->setParameter('id', $userToId)
-            ->setParameter('user', $userFrom)
+            ->andWhere('chat.room = :room')
+            ->setParameter('user', $user)
+            ->setParameter('room', $room)
             ->getQuery()
             ->getResult();
     }
@@ -89,7 +89,6 @@ class ChatRepository extends ServiceEntityRepository
      * @param User $employer
      *
      * @return int|mixed|string|null
-     * @throws NonUniqueResultException
      */
     public function checkRoomByUsers(User $applicant, User $employer)
     {
@@ -105,17 +104,16 @@ class ChatRepository extends ServiceEntityRepository
         foreach ($rooms as $room) {
             $arrayRooms[]= $room['room'];
         }
-        $rooms = implode(',', $arrayRooms);
 
         $rooms = $this->createQueryBuilder('chat')
             ->where('chat.user = :user')
             ->andWhere('chat.room IN (:rooms)')
             ->setParameter('user', $employer)
-            ->setParameter('rooms', $rooms)
+            ->setParameter('rooms', $arrayRooms)
             ->distinct()
             ->getQuery();
 
-        return $rooms->getResult()[0];
+        return $rooms->getResult()[0] ?? null;
     }
 
     /**
@@ -165,4 +163,19 @@ class ChatRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @param string $room Room Id
+     *
+     * @return int|mixed|string|null
+     */
+    public function checkNewRoom(string $room)
+    {
+        return $this->createQueryBuilder('chat')
+            ->where('chat.room = :room')
+            ->setParameter('room', $room)
+            ->getQuery()
+            ->getResult();
+    }
+
 }

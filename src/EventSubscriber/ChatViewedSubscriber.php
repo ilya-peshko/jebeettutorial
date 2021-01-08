@@ -2,13 +2,15 @@
 
 namespace App\EventSubscriber;
 
-use App\Entity\User\User;
+use App\Entity\Chat;
 use App\Event\ChatMessagesEvent;
 use App\Repository\ChatRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Class ChatViewedSubscriber
+ *
  * @package App\EventSubscriber
  */
 class ChatViewedSubscriber implements EventSubscriberInterface
@@ -18,25 +20,15 @@ class ChatViewedSubscriber implements EventSubscriberInterface
      */
     private $chatRepository;
 
-    public function __construct(ChatRepository $chatRepository)
+    /**
+     * @var EntityManagerInterface
+     */
+    private $em;
+
+    public function __construct(ChatRepository $chatRepository, EntityManagerInterface $em)
     {
         $this->chatRepository = $chatRepository;
-    }
-
-    /**
-     * @param ChatMessagesEvent $event
-     */
-    public function onChatMessagesEvent(ChatMessagesEvent $event): void
-    {
-        $messages = $event->getMessages();
-
-        $messages = $this->chatRepository->getNotViewedMessagesByUsers($id, $userFrom);
-        if ($messages) {
-            foreach ($messages as $message) {
-                $message->setViewed(true);
-            }
-        }
-
+        $this->em             = $em;
     }
 
     /**
@@ -45,7 +37,23 @@ class ChatViewedSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            'chat.messages.event' => 'onChatMessagesEvent',
+            ChatMessagesEvent::NAME => 'onChatMessagesEvent',
         ];
+    }
+
+    /**
+     * @param ChatMessagesEvent $event
+     */
+    public function onChatMessagesEvent(ChatMessagesEvent $event): void
+    {
+        $messages = $this->chatRepository->getNotViewedMessagesByUsers($event->getRoom(), $event->getUser());
+        if ($messages) {
+            /** @var Chat $message */
+            foreach ($messages as $message) {
+                $message->setViewed(true);
+                $this->em->persist($message);
+            }
+            $this->em->flush();
+        }
     }
 }

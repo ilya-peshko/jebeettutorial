@@ -2,55 +2,48 @@
 
 namespace App\Event;
 
-use App\Entity\Chat;
 use App\Entity\User\User;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class ChatMessagesEvent extends Event
 {
-    /** @var User */
-    private $userApplicant;
+    public const NAME = 'chat.messages.event';
 
-    /** @var User */
-    private $userEmployer;
+    /**
+     * @var User
+     */
+    private $user;
 
-    /** @var User */
-    private $activeUser;
+    /**
+     * @var string
+     */
+    private $room;
 
     /**
      * ChatMessagesEvent constructor.
-     * @param User $userApplicant
-     * @param User $userEmployer
-     * @param User $activeUser
+     *
+     * @param User   $user
+     * @param string $room
      */
-    public function __construct(User $userApplicant, User $userEmployer, User $activeUser)
+    public function __construct(User $user, string $room)
     {
-        $this->userApplicant = $userApplicant;
-        $this->userEmployer  = $userEmployer;
-        $this->activeUser    = $activeUser;
+        $this->user = $user;
+        $this->room = $room;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRoom(): string
+    {
+        return $this->room;
     }
 
     /**
      * @return User
      */
-    public function getUserApplicant(): User
+    public function getUser(): User
     {
-        return $this->userApplicant;
-    }
-
-    /**
-     * @return User
-     */
-    public function getUserEmployer(): User
-    {
-        return $this->userEmployer;
-    }
-
-    /**
-     * @return User
-     */
-    public function getActiveUser(): User
-    {
-        return $this->activeUser;
+        return $this->user;
     }
 }

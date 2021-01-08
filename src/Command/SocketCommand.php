@@ -10,6 +10,7 @@ use Ratchet\App;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class SocketCommand
@@ -33,18 +34,26 @@ class SocketCommand extends Command
     private $chatRepository;
 
     /**
-     * @param EntityManagerInterface $em
-     * @param UserRepository $userRepository
-     * @param ChatRepository $chatRepository
+     * @var EventDispatcherInterface
+     */
+    protected $dispatcher;
+
+    /**
+     * @param EntityManagerInterface   $em
+     * @param UserRepository           $userRepository
+     * @param ChatRepository           $chatRepository
+     * @param EventDispatcherInterface $dispatcher
      */
     public function __construct(
         EntityManagerInterface $em,
         UserRepository $userRepository,
-        ChatRepository $chatRepository
+        ChatRepository $chatRepository,
+        EventDispatcherInterface $dispatcher
     ) {
-        $this->em = $em;
+        $this->em             = $em;
         $this->userRepository = $userRepository;
         $this->chatRepository = $chatRepository;
+        $this->dispatcher     = $dispatcher;
 
         parent::__construct();
     }
@@ -78,7 +87,8 @@ class SocketCommand extends Command
         $app->route('{_locale<en|ru>}/company/{id}/chat/{room}', new Chat(
             $this->em,
             $this->userRepository,
-            $this->chatRepository
+            $this->chatRepository,
+            $this->dispatcher
         ));
 
         $app->run();

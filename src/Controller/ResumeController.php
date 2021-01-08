@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Controller\API\BaseController;
 use App\Entity\Job;
 use App\Entity\JobApplication;
 use App\Entity\Resume;
@@ -12,14 +13,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Config\Definition\Exception\Exception;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ResumeController extends AbstractController
+class ResumeController extends BaseController
 {
     use FormTrait;
 
@@ -96,8 +95,6 @@ class ResumeController extends AbstractController
      */
     public function show(Request $request, Resume $resume, EntityManagerInterface $em): Response
     {
-        $deleteForm = $this->createDeleteForm($resume);
-
         /** @var User $user */
         $user = $this->getUser();
 
@@ -117,44 +114,28 @@ class ResumeController extends AbstractController
         }
 
         return $this->render('resume/show.html.twig', [
-            'resume'     => $resume,
-            'deleteForm' => $deleteForm->createView(),
+            'resume' => $resume,
         ]);
     }
 
     /**
-     * @param Resume $resume
+     * @Route("/resume/edit/delete/{id}", name="resume_delete", methods="POST")
+     * @Entity("resume", expr="repository.find(id)")
      *
-     * @return FormInterface
-     */
-    private function createDeleteForm(Resume $resume): FormInterface
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('resume_delete', ['id' => $resume->getId()]))
-            ->setMethod('DELETE')
-            ->getForm();
-    }
-
-    /**
-     * @Route("resume/{id}/edit/delete", name="resume_delete", methods="DELETE")
-     *
-     * @param Request $request
-     * @param Resume $resume
+     * @param Resume                 $resume
      * @param EntityManagerInterface $em
      *
      * @return Response
      */
-    public function delete(Request $request, Resume $resume, EntityManagerInterface $em): Response
+    public function delete(Resume $resume, EntityManagerInterface $em): Response
     {
-        $form = $this->createDeleteForm($resume);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->remove($resume);
-            $em->flush();
+        if ($this->getUser() !== $resume->getUser()) {
+            throw new Exception('You not have permissions');
         }
+        $em->remove($resume);
+        $em->flush();
 
-        return $this->redirectToRoute('resume_list');
+        return $this->successMessage('Delete success');
     }
 
     /**

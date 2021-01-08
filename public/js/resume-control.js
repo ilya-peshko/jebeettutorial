@@ -1,10 +1,10 @@
-class Company {
-    constructor(companyId, pathToRedirect)
+class ResumeControl {
+    constructor(resumeId, pathToRedirect)
     {
         function deleteCompany()
         {
             return (
-                fetch('/company/edit/delete/' + companyId, {
+                fetch('/resume/edit/delete/' + resumeId, {
                     method: 'post',
                     headers: {
                         'Content-type': 'application/json',
@@ -17,9 +17,9 @@ class Company {
 
         this.init = () => {
             console.log(pathToRedirect);
-            let deleteButton = document.getElementById('delete-company');
+            let deleteButton = document.getElementById('delete-resume');
             deleteButton.addEventListener('click', function (event) {
-                console.log(companyId);
+                console.log(resumeId);
                 deleteCompany().then();
             });
         }

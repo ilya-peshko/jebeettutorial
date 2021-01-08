@@ -10,7 +10,6 @@
     {% if app.user and (app.user is same as(resume.user)) %}
         {% include 'resume/control_panel.html.twig' with {
             'resume': resume,
-            'deleteForm': deleteForm,
         } only %}
     {% endif %}
 
@@ -42,13 +41,19 @@
                 </a>
             </div>
             {% elseif app.user and app.user.role('ROLE_EMPLOYER')%}
-            <div class="col-sm-12 text-right">
-                <a class="btn btn-default" href="{{ path('job_application_responses') }}">
-                    <span class="fa fa-arrow-left" aria-hidden="true"></span>
-                    {{ 'back.to.list'|trans }}
-                </a>
-            </div>
-            {% endif %}
+                <div class="col-sm-12 text-right">
+                    <a class="btn btn-default" href="{{ path('job_application_responses') }}">
+                        <span class="fa fa-arrow-left" aria-hidden="true"></span>
+                        {{ 'back.to.list'|trans }}
+                    </a>
+                </div>
+           {% endif %}
+            <script src = "{{ asset('js/resume-control.js') }}"></script>
+            <script type="text/javascript">
+                let company = new ResumeControl('{{ resume.id }}', '{{ path('resume_list') }}');
+                company.init();
+                console.log({{ resume.id }});
+            </script>
         </div>
     </div>
 {% endblock %}

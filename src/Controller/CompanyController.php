@@ -11,7 +11,6 @@ use App\Repository\ChatRepository;
 use App\Repository\CompanyRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NonUniqueResultException;
 use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -75,7 +74,8 @@ class CompanyController extends BaseController
             $em->flush();
 
             return $this->redirectToRoute(
-                'company_show'
+                'company_show',
+                ['id' => $company->getId()]
             );
         }
 
@@ -91,7 +91,6 @@ class CompanyController extends BaseController
      * @param Company $company
      *
      * @return Response
-     * @throws NonUniqueResultException
      */
     public function show(Company $company): Response
     {
@@ -129,7 +128,6 @@ class CompanyController extends BaseController
      * @IsGranted("ROLE_EMPLOYER")
      *
      * @return Response
-     * @throws NonUniqueResultException
      */
     public function edit(Request $request, EntityManagerInterface $em): Response
     {
@@ -162,7 +160,7 @@ class CompanyController extends BaseController
     /**
      * @Route("company/edit/delete/{id}", name="company_delete", methods="POST")
      * @Entity("company", expr="repository.find(id)")
-     * @param Company $company
+     * @param Company                $company
      * @param EntityManagerInterface $em
      *
      * @return Response
@@ -185,7 +183,7 @@ class CompanyController extends BaseController
      * @param Company                $company
      * @param Request                $request
      * @param EntityManagerInterface $em
-     * @param string                 $room Room.
+     * @param string                 $room     Room.
      *
      * @return Response
      */
@@ -204,8 +202,6 @@ class CompanyController extends BaseController
             return $this->render('company/chat.html.twig', [
                 'company'           => $company,
                 'messages'          => $messages,
-                'companionMessages' => $companionMessages,
-                'userMessages'      => $userMessages,
                 'room'              => $room,
             ]);
         }
@@ -213,6 +209,7 @@ class CompanyController extends BaseController
         return $this->render('company/chat.html.twig', [
             'company'           => $company,
             'room'              => $room,
+            'hasMessages'       => false,
         ]);
     }
 

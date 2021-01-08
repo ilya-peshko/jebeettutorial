@@ -43,7 +43,7 @@
 
         <script src = "{{ asset('js/company.js') }}"></script>
         <script type="text/javascript">
-            let company = new Company('{{ company.id }}');
+            let company = new Company('{{ company.id }}', '{{ path('job_list') }}');
             company.init();
         </script>
     {% else %}

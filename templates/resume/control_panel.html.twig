@@ -1,13 +1,12 @@
 <nav class="navbar navbar-light float-right">
     <form class="form-inline">
-        {{ form_start(deleteForm, {'attr': {'class': 'navbar-form navbar-left'}}) }}
-        {{ form_widget(deleteForm) }}
-
-        <button type="submit" class="btn" onclick="return confirm('Are you sure?')">
+        <button id="delete-resume"
+                type="submit"
+                class="btn btn-outline-danger"
+                onclick="return confirm('Are you sure?')">
             <span class="fa fa-trash" aria-hidden="true"></span>
             {{ 'delete'|trans }}
         </button>
-        {{ form_end(deleteForm) }}
         <a class="btn navbar-btn ml-2" href="{{ path('resume_edit', {id:resume.id}) }}">
             <span class="fa fa-pencil" aria-hidden="true"></span>
             {{ 'edit'|trans }}

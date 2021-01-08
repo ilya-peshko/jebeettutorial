@@ -13,14 +13,13 @@
                         {% for chat in chats %}
                             <p>
                                 <a href="{{ path('company_chat', {id:app.user.company.id, room: chat.room}) }}">
-                                    {{ chat.user.username }}
+                                    {{ chat.username }}
                                 </a>
                             </p>
                         {% endfor %}
                     {% else %}
                         <p>No active chats</p>
                     {% endif %}
-
                 </div>
             </div>
         </div>

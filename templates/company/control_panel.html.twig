@@ -1,15 +1,13 @@
 <nav class="navbar navbar-light float-right">
     <form class="form-inline float-right">
         {% if app.user and (app.user is same as(company.user)) %}
-            <a href="{{ path('company_delete', {id:company.id}) }}" class="ml-2">
-                <button id="delete-company"
-                        type="submit"
-                        class="btn btn-outline-danger"
-                        onclick="return confirm('Are you sure?')">
-                    <span class="fa fa-trash" aria-hidden="true"></span>
-                    {{ 'delete'|trans }}
-                </button>
-            </a>
+            <button id="delete-company"
+                    type="submit"
+                    class="btn btn-outline-danger"
+                    onclick="return confirm('Are you sure?')">
+                <span class="fa fa-trash" aria-hidden="true"></span>
+                {{ 'delete'|trans }}
+            </button>
             <a class="btn btn-outline-info ml-2"
                href="{{ path('company_edit', {'id': company.id}) }}">
                 <span class="fa fa-pencil" aria-hidden="true"></span>

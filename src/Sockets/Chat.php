@@ -3,11 +3,14 @@
 namespace App\Sockets;
 
 use App\Entity\User\User;
+use App\Event\ChatMessagesEvent;
 use App\Repository\ChatRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
+use SplObjectStorage;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class Chat
@@ -16,7 +19,7 @@ use Ratchet\ConnectionInterface;
 class Chat implements MessageComponentInterface
 {
     /**
-     * @var \SplObjectStorage
+     * @var SplObjectStorage
      */
     protected $clients;
 
@@ -40,27 +43,37 @@ class Chat implements MessageComponentInterface
     private $chatRepository;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $dispatcher;
+
+    /**
      * Chat constructor.
-     * @param EntityManagerInterface $em
-     * @param UserRepository         $userRepository
-     * @param ChatRepository         $chatRepository
+     *
+     * @param EntityManagerInterface   $em
+     * @param UserRepository           $userRepository
+     * @param ChatRepository           $chatRepository
+     * @param EventDispatcherInterface $dispatcher
      */
     public function __construct(
         EntityManagerInterface $em,
         UserRepository $userRepository,
-        ChatRepository $chatRepository
+        ChatRepository $chatRepository,
+        EventDispatcherInterface $dispatcher
     ) {
-        $this->clients = new \SplObjectStorage;
-        $this->userInfo = [];
-        $this->em = $em;
+        $this->clients        = new SplObjectStorage;
+        $this->userInfo       = [];
+        $this->em             = $em;
         $this->userRepository = $userRepository;
         $this->chatRepository = $chatRepository;
+        $this->dispatcher     = $dispatcher;
     }
 
     function onOpen(ConnectionInterface $conn): void
     {
         // Store the new connection to send messages to later
         $this->clients->attach($conn);
+
         $count = count($this->clients);
         echo "New connection! ({$conn->resourceId})\n";
         echo "Count connections: {$count}\n";
@@ -84,11 +97,14 @@ class Chat implements MessageComponentInterface
             }
         }
 
-//        $data = json_decode($msg, false);
-//
-//        if (property_exists($data, 'connectedUserId')) {
-//            $this->userInfo[$data->connectedUserId] = $from->resourceId;
-//        }
+        $data = json_decode($msg, true);
+        if (array_key_exists('connectedUserId', $data)) {
+            /** @var User $user */
+            $user  = $this->userRepository->find($data['connectedUserId']);
+            $event = new ChatMessagesEvent($user, $data['room']);
+            $this->dispatcher->dispatch($event);
+        }
+
 //        echo "Message sanded\n";
 //        if (property_exists($data, 'to')) {
 //            /** @var User $user */
@@ -114,7 +130,6 @@ class Chat implements MessageComponentInterface
 //            $this->em->persist($chat);
 //            $this->em->flush();
     }
-
 
     function onClose(ConnectionInterface $conn): void
     {
