@@ -47,6 +47,13 @@
                         {{ 'back.to.list'|trans }}
                     </a>
                 </div>
+                <div class="col-sm-12 text-right">
+                    <a class="btn btn-outline-info ml-2 float-right"
+                       href="{{ path('company_chat', {id: app.user.company.id, room: room}) }}">
+                        <span class="fa fa-plus" aria-hidden="true"></span>
+                        {{ 'chat'|trans }}
+                    </a>
+                </div>
            {% endif %}
             <script src = "{{ asset('js/resume-control.js') }}"></script>
             <script type="text/javascript">

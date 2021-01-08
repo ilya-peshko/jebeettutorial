@@ -1,8 +1,23 @@
 class JobApplication {
     constructor(userId, locale)
     {
+        const getQueryParams = ( params, url ) => {
+            let href = url;
+            let reg = new RegExp('[?&]' + params + '=([^&#]*)', 'i');
+            let queryString = reg.exec(href);
+            return queryString ? queryString[1] : null;
+        };
+
         this.init = () => {
             getJobApplications();
+
+            $(document).on('click', '.page-link', function (e) {
+                e.preventDefault();
+                if (!$(this).parent().hasClass('disabled')) {
+                    let page = getQueryParams('page', $(this).attr('href'));
+                    getJobApplications(page);
+                }
+            })
         };
 
         function getJobApplications(page = 1)
@@ -15,7 +30,7 @@ class JobApplication {
                     async: true,
 
                     beforeSend: function () {
-                        $('.loader').show()
+                        $('body').removeClass('loaded');
                     },
                     complete: function () {
                         $('.loader').hide();

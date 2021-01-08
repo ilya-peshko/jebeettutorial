@@ -3,14 +3,18 @@
 namespace App\Controller;
 
 use App\Controller\API\BaseController;
+use App\Entity\Chat;
 use App\Entity\Job;
 use App\Entity\JobApplication;
 use App\Entity\Resume;
 use App\Entity\Traits\FormTrait;
 use App\Entity\User\User;
 use App\Form\ResumeType;
+use App\Repository\ChatRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;
+use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Config\Definition\Exception\Exception;
@@ -21,6 +25,21 @@ use Symfony\Component\Routing\Annotation\Route;
 class ResumeController extends BaseController
 {
     use FormTrait;
+
+    /**
+     * @var ChatRepository
+     */
+    private $chatRepository;
+
+    /**
+     * ResumeController constructor.
+     *
+     * @param ChatRepository $chatRepository
+     */
+    public function __construct(ChatRepository $chatRepository)
+    {
+        $this->chatRepository = $chatRepository;
+    }
 
     /**
      * @Route(
@@ -99,7 +118,6 @@ class ResumeController extends BaseController
         $user = $this->getUser();
 
         if ($request->query->get('id')) {
-
             /** @var JobApplication $jobApplication */
             $jobApplication = $this->getDoctrine()
                 ->getRepository(JobApplication::class)
@@ -107,14 +125,18 @@ class ResumeController extends BaseController
 
             if ($jobApplication && ($jobApplication->getJob()->getCompany()->getUser() === $user)) {
                 $jobApplication->setViewed(true);
-
                 $em->persist($jobApplication);
                 $em->flush();
             }
         }
+        if ($user->hasRole('ROLE_EMPLOYER')) {
+            /** @var Chat $hasRoom */
+            $hasRoom = $this->chatRepository->checkRoomByUsers($resume->getUser(), $user);
+        }
 
         return $this->render('resume/show.html.twig', [
             'resume' => $resume,
+            'room'   => $hasRoom ? $hasRoom->getRoom() : Uuid::uuid4(),
         ]);
     }
 
